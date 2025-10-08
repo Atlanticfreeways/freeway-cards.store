@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cards Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
+        .form-group { margin: 10px 0; }
+        button { padding: 10px 15px; background: #007bff; color: white; border: none; cursor: pointer; }
+        input, select { padding: 8px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Virtual Cards Dashboard</h1>
+    
+    <div class="wallet-section">
+        <h2>Wallet Balance: $0.00</h2>
+        <form method="POST" action="/api/wallet/fund">
+            <div class="form-group">
+                <label>Fund Amount:</label>
+                <input type="number" name="amount" step="0.01" required>
+                <button type="submit">Add Funds</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="cards-section">
+        <h3>Your Cards</h3>
+        <div id="cards-list">
+            <!-- Cards will be populated by server -->
+        </div>
+        
+        <h3>Create New Card</h3>
+        <form method="POST" action="/api/cards/create">
+            <div class="form-group">
+                <label>Card Type:</label>
+                <select name="type" required>
+                    <option value="">Select Type</option>
+                    <option value="visa">Visa</option>
+                    <option value="mastercard">Mastercard</option>
+                </select>
+            </div>
+            <button type="submit">Create Card</button>
+        </form>
+    </div>
+
+    <div class="transactions-section">
+        <h3>Recent Transactions</h3>
+        <div id="transactions-list">
+            <!-- Transactions will be populated by server -->
+        </div>
+    </div>
+
+    <div class="actions">
+        <form method="POST" action="/api/auth/logout" style="display: inline;">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</body>
+</html>

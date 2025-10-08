@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google OAuth Callback - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <div class="auth-container" style="max-width: 400px; margin: 50px auto; padding: 20px; text-align: center;">
+        <div class="card">
+            <div id="loading" style="padding: 40px;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🔄</div>
+                <h2>Completing Sign In...</h2>
+                <p>Please wait while we complete your Google authentication.</p>
+            </div>
+            
+            <div id="success" style="display: none; padding: 40px;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                <h2>Sign In Successful!</h2>
+                <p>Redirecting to your dashboard...</p>
+            </div>
+            
+            <div id="error" style="display: none; padding: 40px;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
+                <h2>Sign In Failed</h2>
+                <p id="errorMessage">Authentication failed. Please try again.</p>
+                <a href="../login.html" class="btn btn-primary" style="margin-top: 1rem;">Try Again</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script>
+        async function handleOAuthCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+            
+            if (error) {
+                showError('Authentication was cancelled or failed.');
+                return;
+            }
+            
+            if (!code) {
+                showError('No authorization code received.');
+                return;
+            }
+            
+            try {
+                // Exchange code for token with backend
+                const response = await api.request('/auth/google/callback', {
+                    method: 'POST',
+                    body: JSON.stringify({ code })
+                });
+                
+                if (response.token) {
+                    api.setAuthToken(response.token);
+                    localStorage.setItem('userEmail', response.user.email);
+                    localStorage.setItem('isLoggedIn', 'true');
+                    
+                    showSuccess();
+                    
+                    // Close popup if this is a popup window
+                    if (window.opener) {
+                        window.opener.postMessage({ success: true, user: response.user }, '*');
+                        window.close();
+                    } else {
+                        // Redirect to dashboard
+                        setTimeout(() => {
+                            window.location.href = '../dashboard.html';
+                        }, 2000);
+                    }
+                } else {
+                    throw new Error('No token received from server');
+                }
+                
+            } catch (error) {
+                console.error('OAuth callback error:', error);
+                showError(error.message || 'Authentication failed. Please try again.');
+            }
+        }
+        
+        function showSuccess() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('success').style.display = 'block';
+        }
+        
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
+        }
+        
+        // Start OAuth callback handling
+        handleOAuthCallback();
+    </script>
+</body>
+</html>

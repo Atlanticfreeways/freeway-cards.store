@@ -1,0 +1,104 @@
+/* Mobile Responsive Styles */
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+  .dashboard-nav {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .nav-links {
+    width: 100%;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  .nav-links a {
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: var(--light);
+  }
+}
+
+/* Mobile Forms */
+@media (max-width: 480px) {
+  .auth-container {
+    margin: 20px auto;
+    padding: 16px;
+  }
+  
+  .card {
+    padding: 20px 16px;
+  }
+  
+  input, select, textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  .btn {
+    padding: 16px 24px;
+    font-size: 18px;
+  }
+}
+
+/* Mobile Dashboard */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-btn {
+    padding: 24px 20px;
+  }
+}
+
+/* Mobile Tables */
+@media (max-width: 768px) {
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+  table {
+    min-width: 600px;
+  }
+}
+
+/* Mobile Wallet */
+@media (max-width: 480px) {
+  .wallet-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .amount-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Touch Improvements */
+@media (hover: none) and (pointer: coarse) {
+  .btn:hover {
+    transform: none;
+  }
+  
+  .action-btn:hover {
+    transform: none;
+  }
+  
+  /* Larger touch targets */
+  .btn {
+    min-height: 48px;
+  }
+  
+  .nav-links a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw Funds - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../dashboard.html">💳 Freeway Cards</a>
+            </div>
+            <div class="nav-user">
+                <span>👤 John Doe</span>
+                <a href="../auth/login.html" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <a href="index.html" class="back-btn">← Back to Wallet</a>
+                <h1>💸 Withdraw Funds</h1>
+                <p>Transfer money from your wallet to your bank account</p>
+            </div>
+
+            <div class="withdraw-container">
+                <!-- Current Balance -->
+                <div class="balance-card">
+                    <div class="balance-info">
+                        <span class="balance-label">Available Balance</span>
+                        <span class="balance-amount" id="availableBalance">$2,847.50</span>
+                    </div>
+                    <div class="balance-note">
+                        <small>💡 Withdrawals typically take 1-3 business days</small>
+                    </div>
+                </div>
+
+                <!-- Withdrawal Form -->
+                <div class="withdraw-form-card">
+                    <form id="withdrawForm" class="withdraw-form">
+                        <!-- Bank Account Selection -->
+                        <div class="form-group">
+                            <label for="bankAccount">🏦 Bank Account</label>
+                            <select id="bankAccount" required>
+                                <option value="">Select bank account</option>
+                                <option value="chase-checking">Chase Checking ****1234</option>
+                                <option value="wells-savings">Wells Fargo Savings ****5678</option>
+                            </select>
+                            <button type="button" class="add-account-btn" onclick="showAddAccountModal()">
+                                ➕ Add New Account
+                            </button>
+                        </div>
+
+                        <!-- Amount Input -->
+                        <div class="form-group">
+                            <label for="amount">💰 Withdrawal Amount</label>
+                            <div class="amount-input-container">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="amount" placeholder="0.00" min="10" max="2847.50" step="0.01" required>
+                            </div>
+                            <div class="amount-suggestions">
+                                <button type="button" onclick="setAmount(100)">$100</button>
+                                <button type="button" onclick="setAmount(500)">$500</button>
+                                <button type="button" onclick="setAmount(1000)">$1,000</button>
+                                <button type="button" onclick="setAmount(2847.50)">All</button>
+                            </div>
+                        </div>
+
+                        <!-- Withdrawal Details -->
+                        <div class="withdrawal-details">
+                            <div class="detail-row">
+                                <span>Withdrawal Amount:</span>
+                                <span id="withdrawAmount">$0.00</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Processing Fee:</span>
+                                <span id="processingFee">$0.00</span>
+                            </div>
+                            <div class="detail-row total">
+                                <span>Total Deducted:</span>
+                                <span id="totalDeducted">$0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Processing Time -->
+                        <div class="processing-info">
+                            <h3>⏱️ Processing Time</h3>
+                            <div class="processing-timeline">
+                                <div class="timeline-item">
+                                    <span class="timeline-icon">📝</span>
+                                    <div>
+                                        <strong>Request Submitted</strong>
+                                        <small>Immediately</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <span class="timeline-icon">🔍</span>
+                                    <div>
+                                        <strong>Processing</strong>
+                                        <small>Within 24 hours</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <span class="timeline-icon">💳</span>
+                                    <div>
+                                        <strong>Bank Transfer</strong>
+                                        <small>1-3 business days</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="withdraw-btn" disabled>
+                            💸 Withdraw Funds
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Recent Withdrawals -->
+                <div class="recent-withdrawals">
+                    <h3>📋 Recent Withdrawals</h3>
+                    <div class="withdrawal-list">
+                        <div class="withdrawal-item">
+                            <div class="withdrawal-info">
+                                <span class="withdrawal-bank">🏦 Chase Checking ****1234</span>
+                                <span class="withdrawal-date">Dec 15, 2024</span>
+                            </div>
+                            <div class="withdrawal-amount">
+                                <span class="amount">-$500.00</span>
+                                <span class="status completed">✅ Completed</span>
+                            </div>
+                        </div>
+                        <div class="withdrawal-item">
+                            <div class="withdrawal-info">
+                                <span class="withdrawal-bank">🏦 Wells Fargo Savings ****5678</span>
+                                <span class="withdrawal-date">Dec 10, 2024</span>
+                            </div>
+                            <div class="withdrawal-amount">
+                                <span class="amount">-$1,200.00</span>
+                                <span class="status processing">⏳ Processing</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Bank Account Modal -->
+    <div id="addAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🏦 Add Bank Account</h3>
+                <button class="modal-close" onclick="closeAddAccountModal()">&times;</button>
+            </div>
+            <form id="addAccountForm" class="modal-form">
+                <div class="form-group">
+                    <label for="bankName">Bank Name</label>
+                    <input type="text" id="bankName" placeholder="e.g., Chase Bank" required>
+                </div>
+                <div class="form-group">
+                    <label for="accountType">Account Type</label>
+                    <select id="accountType" required>
+                        <option value="">Select type</option>
+                        <option value="checking">Checking</option>
+                        <option value="savings">Savings</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="routingNumber">Routing Number</label>
+                    <input type="text" id="routingNumber" placeholder="9 digits" maxlength="9" required>
+                </div>
+                <div class="form-group">
+                    <label for="accountNumber">Account Number</label>
+                    <input type="text" id="accountNumber" placeholder="Account number" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" onclick="closeAddAccountModal()">Cancel</button>
+                    <button type="submit">Add Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="../dashboard.html" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="../cards/create.html" class="nav-item">
+            <span class="nav-icon">💳</span>
+            <span class="nav-label">Cards</span>
+        </a>
+        <a href="index.html" class="nav-item active">
+            <span class="nav-icon">💰</span>
+            <span class="nav-label">Wallet</span>
+        </a>
+        <a href="../dashboard/profile.html" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Profile</span>
+        </a>
+        <a href="../support/index.html" class="nav-item">
+            <span class="nav-icon">❓</span>
+            <span class="nav-label">Support</span>
+        </a>
+    </nav>
+
+    <script src="../js/ui-components.js"></script>
+    <script>
+        // Withdrawal form functionality
+        const form = document.getElementById('withdrawForm');
+        const amountInput = document.getElementById('amount');
+        const bankSelect = document.getElementById('bankAccount');
+        const submitBtn = document.querySelector('.withdraw-btn');
+
+        // Update calculations when amount changes
+        amountInput.addEventListener('input', updateCalculations);
+        bankSelect.addEventListener('change', validateForm);
+
+        function setAmount(value) {
+            amountInput.value = value;
+            updateCalculations();
+        }
+
+        function updateCalculations() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const fee = amount > 0 ? Math.max(2.50, amount * 0.01) : 0;
+            const total = amount + fee;
+
+            document.getElementById('withdrawAmount').textContent = `$${amount.toFixed(2)}`;
+            document.getElementById('processingFee').textContent = `$${fee.toFixed(2)}`;
+            document.getElementById('totalDeducted').textContent = `$${total.toFixed(2)}`;
+
+            validateForm();
+        }
+
+        function validateForm() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const bankSelected = bankSelect.value;
+            const isValid = amount >= 10 && amount <= 2847.50 && bankSelected;
+            
+            submitBtn.disabled = !isValid;
+        }
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const amount = parseFloat(amountInput.value);
+            const bank = bankSelect.options[bankSelect.selectedIndex].text;
+            
+            showToast(`Withdrawal request submitted! $${amount.toFixed(2)} will be transferred to ${bank}`, 'success');
+            
+            // Simulate redirect after success
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        });
+
+        // Add bank account modal
+        function showAddAccountModal() {
+            document.getElementById('addAccountModal').style.display = 'flex';
+        }
+
+        function closeAddAccountModal() {
+            document.getElementById('addAccountModal').style.display = 'none';
+        }
+
+        // Add account form
+        document.getElementById('addAccountForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const bankName = document.getElementById('bankName').value;
+            const accountType = document.getElementById('accountType').value;
+            const routingNumber = document.getElementById('routingNumber').value;
+            const accountNumber = document.getElementById('accountNumber').value;
+            
+            // Add to select dropdown
+            const option = document.createElement('option');
+            option.value = `${bankName.toLowerCase()}-${accountType}`;
+            option.textContent = `${bankName} ${accountType.charAt(0).toUpperCase() + accountType.slice(1)} ****${accountNumber.slice(-4)}`;
+            bankSelect.appendChild(option);
+            bankSelect.value = option.value;
+            
+            showToast('Bank account added successfully!', 'success');
+            closeAddAccountModal();
+            validateForm();
+        });
+
+        // Initialize
+        updateCalculations();
+    </script>
+
+    <style>
+        .withdraw-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .balance-amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+            margin: 8px 0;
+        }
+
+        .balance-note {
+            margin-top: 12px;
+            opacity: 0.9;
+        }
+
+        .withdraw-form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        .amount-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 12px;
+            font-size: 1.2em;
+            color: #666;
+            z-index: 1;
+        }
+
+        .amount-input-container input {
+            padding-left: 32px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .amount-suggestions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .amount-suggestions button {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .amount-suggestions button:hover {
+            background: #f0f0f0;
+        }
+
+        .add-account-btn {
+            margin-top: 8px;
+            padding: 8px 16px;
+            background: #f8f9fa;
+            border: 1px dashed #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .withdrawal-details {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .detail-row.total {
+            border-top: 1px solid #ddd;
+            padding-top: 8px;
+            font-weight: bold;
+        }
+
+        .processing-info {
+            margin: 24px 0;
+        }
+
+        .processing-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .timeline-icon {
+            font-size: 1.5em;
+            width: 40px;
+            text-align: center;
+        }
+
+        .withdraw-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .withdraw-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .recent-withdrawals {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .withdrawal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .withdrawal-item:last-child {
+            border-bottom: none;
+        }
+
+        .withdrawal-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .withdrawal-date {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .withdrawal-amount {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .status.completed {
+            color: #28a745;
+            font-size: 0.9em;
+        }
+
+        .status.processing {
+            color: #ffc107;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .withdraw-container {
+                padding: 16px;
+            }
+
+            .balance-amount {
+                font-size: 2em;
+            }
+
+            .processing-timeline {
+                gap: 8px;
+            }
+
+            .timeline-item {
+                gap: 8px;
+            }
+
+            .timeline-icon {
+                font-size: 1.2em;
+                width: 30px;
+            }
+        }
+    </style>
+</body>
+</html>

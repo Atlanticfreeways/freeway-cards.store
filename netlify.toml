@@ -1,0 +1,21 @@
+[build]
+  publish = "frontend"
+  command = "echo 'Static site deployment'"
+
+[build.environment]
+  NODE_ENV = "production"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://freeway-cards-backend.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production.environment]
+  GOOGLE_CLIENT_ID_PROD = "your-production-google-client-id"
+  API_BASE_URL_PROD = "https://your-backend-url.herokuapp.com/api"

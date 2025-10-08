@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Management - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../dashboard.html">💳 Freeway Cards</a>
+            </div>
+            <div class="nav-user">
+                <span>👤 Business Admin</span>
+                <a href="../auth/login.html" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <a href="../dashboard.html" class="back-btn">← Back</a>
+                <h1>👥 Team Management</h1>
+            </div>
+
+            <div class="team-container">
+                <div class="add-member-card">
+                    <h3>➕ Add Team Member</h3>
+                    <form id="addMemberForm">
+                        <div class="form-row">
+                            <input type="email" placeholder="📧 Email" required>
+                            <select required>
+                                <option value="">Role</option>
+                                <option value="admin">🔑 Admin</option>
+                                <option value="manager">👨💼 Manager</option>
+                                <option value="employee">👤 Employee</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">📨 Invite</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="team-members-card">
+                    <h3>👥 Team Members (3)</h3>
+                    <div class="members-list">
+                        <div class="member-item">
+                            <div class="member-info">
+                                <div class="member-avatar">JD</div>
+                                <div>
+                                    <h4>John Doe</h4>
+                                    <p>john@company.com</p>
+                                </div>
+                            </div>
+                            <span class="role-badge admin">🔑 Admin</span>
+                        </div>
+                        <div class="member-item">
+                            <div class="member-info">
+                                <div class="member-avatar">SM</div>
+                                <div>
+                                    <h4>Sarah Miller</h4>
+                                    <p>sarah@company.com</p>
+                                </div>
+                            </div>
+                            <span class="role-badge manager">👨💼 Manager</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/ui-components.js"></script>
+    <script>
+        document.getElementById('addMemberForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showToast('Team member invited!', 'success');
+            this.reset();
+        });
+    </script>
+
+    <style>
+        .team-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .add-member-card, .team-members-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: center; }
+        .member-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .member-info { display: flex; align-items: center; gap: 12px; }
+        .member-avatar { width: 40px; height: 40px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .role-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8em; }
+        .role-badge.admin { background: #e3f2fd; color: #1976d2; }
+        .role-badge.manager { background: #f3e5f5; color: #7b1fa2; }
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
+    </style>
+</body>
+</html>

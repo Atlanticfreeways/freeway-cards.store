@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redeem Gift Card - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .redeem-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .code-input {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .card-preview {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 24px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+        .card-preview.show {
+            display: block;
+        }
+        .card-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 16px 0;
+        }
+        .success-message {
+            background: var(--success);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            display: none;
+        }
+        .error-message {
+            background: var(--danger);
+            color: white;
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-top: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="dashboard-nav">
+                <a href="../dashboard/index.html" class="nav-brand">Freeway Cards</a>
+                <div class="nav-links">
+                    <a href="../dashboard/index.html">Dashboard</a>
+                    <a href="../wallet/index.html">Wallet</a>
+                    <a href="../dashboard/profile.html">Profile</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="redeem-container">
+            <h1>Redeem Gift Card</h1>
+            
+            <div class="card">
+                <h2>Enter Gift Card Code</h2>
+                <p>Enter the code from your gift card to add the balance to your wallet.</p>
+                
+                <form id="redeemForm">
+                    <div class="form-group">
+                        <label for="giftCardCode">Gift Card Code</label>
+                        <input type="text" id="giftCardCode" class="code-input" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19">
+                        <div class="error-message" id="errorMessage"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Check Gift Card
+                    </button>
+                </form>
+            </div>
+
+            <div class="card-preview" id="cardPreview">
+                <h3>🎁 Gift Card Found!</h3>
+                <div class="card-value" id="cardValue">$50.00</div>
+                <p id="cardMessage">Happy Birthday! Enjoy your gift.</p>
+                <button class="btn" onclick="redeemCard()" style="background: rgba(255,255,255,0.2); color: white; margin-top: 16px;">
+                    Add to Wallet
+                </button>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <h3>✅ Gift Card Redeemed!</h3>
+                <p>The gift card balance has been added to your wallet.</p>
+                <button class="btn" onclick="goToWallet()" style="background: rgba(255,255,255,0.2); color: white; margin-top: 12px;">
+                    View Wallet
+                </button>
+            </div>
+
+            <div class="card">
+                <h3>📝 How to Find Your Code</h3>
+                <ul style="margin: 16px 0; padding-left: 20px;">
+                    <li><strong>Physical cards:</strong> Scratch off the silver coating on the back</li>
+                    <li><strong>Digital cards:</strong> Check your email for the code</li>
+                    <li><strong>Mobile cards:</strong> Find the code in your purchase confirmation</li>
+                    <li><strong>Demo:</strong> Try code <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">DEMO-GIFT-CARD-TEST</code></li>
+                </ul>
+                
+                <div style="background: #e3f2fd; padding: 16px; border-radius: var(--radius); margin-top: 16px;">
+                    <p style="margin: 0; font-size: 14px;">
+                        <strong>📞 Need help?</strong> Contact our <a href="../support/contact.html" style="color: var(--primary);">support team</a> if you're having trouble finding or redeeming your gift card code.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/ui-components.js"></script>
+    <script>
+        // Format gift card code input
+        document.getElementById('giftCardCode').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+            let formatted = value.match(/.{1,4}/g)?.join('-') || value;
+            if (formatted.length > 19) formatted = formatted.substring(0, 19);
+            e.target.value = formatted;
+        });
+
+        document.getElementById('redeemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            checkGiftCard();
+        });
+
+        let currentGiftCard = null;
+        
+        function checkGiftCard() {
+            const code = document.getElementById('giftCardCode').value;
+            
+            if (code.length < 19) {
+                ui.showToast({
+                    type: 'error',
+                    title: 'Invalid Code',
+                    message: 'Please enter a complete gift card code'
+                });
+                return;
+            }
+            
+            const btn = document.querySelector('#redeemForm button');
+            ui.showLoading(btn, '🔍 Checking...');
+            
+            // Check if gift card exists in localStorage
+            const giftCards = JSON.parse(localStorage.getItem('userGiftCards') || '[]');
+            const foundCard = giftCards.find(card => card.code === code && card.status === 'active');
+            
+            setTimeout(() => {
+                ui.hideLoading(btn);
+                
+                if (foundCard) {
+                    currentGiftCard = foundCard;
+                    displayGiftCard(foundCard);
+                    hideError();
+                    showCardPreview();
+                } else {
+                    // Check for demo codes
+                    if (code === 'DEMO-GIFT-CARD-TEST') {
+                        currentGiftCard = {
+                            id: 'demo_gc',
+                            amount: 50,
+                            design: 'general',
+                            recipientName: 'Demo User',
+                            message: 'Welcome to Freeway Cards! Enjoy this demo gift card.',
+                            code: code,
+                            status: 'active'
+                        };
+                        displayGiftCard(currentGiftCard);
+                        hideError();
+                        showCardPreview();
+                    } else {
+                        // Generate error based on code pattern
+                        if (code.includes('USED') || code.includes('REDEEMED')) {
+                            showError('This gift card has already been redeemed.');
+                        } else {
+                            showError('Invalid gift card code. Please check and try again.');
+                        }
+                    }
+                }
+            }, 1500);
+        }
+        
+        function displayGiftCard(card) {
+            document.getElementById('cardValue').textContent = `$${card.amount.toFixed(2)}`;
+            document.getElementById('cardMessage').textContent = card.message || 'Enjoy your gift card!';
+            
+            // Update card design
+            const preview = document.getElementById('cardPreview');
+            const designs = {
+                birthday: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
+                holiday: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                business: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
+                general: 'linear-gradient(135deg, var(--primary), var(--primary-dark))'
+            };
+            preview.style.background = designs[card.design] || designs.general;
+        }
+
+        function showCardPreview() {
+            document.getElementById('cardPreview').classList.add('show');
+            document.getElementById('redeemForm').style.display = 'none';
+        }
+
+        function redeemCard() {
+            if (!currentGiftCard) return;
+            
+            const btn = event.target;
+            ui.showLoading(btn, '🎁 Redeeming...');
+            
+            // Add transaction for gift card redemption
+            const transactions = JSON.parse(localStorage.getItem('userTransactions') || '[]');
+            transactions.unshift({
+                id: 'tx_' + Date.now(),
+                type: 'refund',
+                title: `Gift Card Redeemed - ${currentGiftCard.recipientName}`,
+                amount: currentGiftCard.amount,
+                date: new Date().toISOString(),
+                status: 'completed',
+                category: 'gift_card',
+                cardId: null
+            });
+            localStorage.setItem('userTransactions', JSON.stringify(transactions));
+            
+            // Mark gift card as used
+            if (currentGiftCard.id !== 'demo_gc') {
+                const giftCards = JSON.parse(localStorage.getItem('userGiftCards') || '[]');
+                const cardIndex = giftCards.findIndex(card => card.id === currentGiftCard.id);
+                if (cardIndex !== -1) {
+                    giftCards[cardIndex].status = 'redeemed';
+                    giftCards[cardIndex].redeemedDate = new Date().toISOString();
+                    localStorage.setItem('userGiftCards', JSON.stringify(giftCards));
+                }
+            }
+            
+            setTimeout(() => {
+                ui.hideLoading(btn);
+                document.getElementById('cardPreview').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                
+                ui.showToast({
+                    type: 'success',
+                    title: 'Gift Card Redeemed!',
+                    message: `$${currentGiftCard.amount.toFixed(2)} added to your wallet`
+                });
+            }, 1500);
+        }
+
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function goToWallet() {
+            window.location.href = '../wallet/index.html';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = '../index.html';
+            }
+        }
+    </script>
+</body>
+</html>

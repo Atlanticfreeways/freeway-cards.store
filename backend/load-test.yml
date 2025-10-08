@@ -1,0 +1,91 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+    - duration: 120
+      arrivalRate: 10
+      name: "Ramp up load"
+    - duration: 300
+      arrivalRate: 20
+      name: "Sustained load"
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - name: "Health Check"
+    weight: 20
+    flow:
+      - get:
+          url: "/api/health"
+          expect:
+            - statusCode: 200
+
+  - name: "User Registration"
+    weight: 10
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            name: "Test User {{ $randomString() }}"
+            email: "test{{ $randomInt(1, 10000) }}@example.com"
+            password: "TestPassword123!"
+            accountType: "individual"
+          expect:
+            - statusCode: [200, 201, 400]
+
+  - name: "User Login"
+    weight: 30
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"
+            password: "TestPassword123!"
+          expect:
+            - statusCode: [200, 401]
+          capture:
+            - json: "$.token"
+              as: "authToken"
+
+  - name: "Get User Cards"
+    weight: 25
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"
+            password: "TestPassword123!"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      - get:
+          url: "/api/cards"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: [200, 401]
+
+  - name: "Performance Monitoring"
+    weight: 5
+    flow:
+      - get:
+          url: "/api/monitoring/performance"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: [200, 401, 403]
+
+  - name: "Static Files"
+    weight: 10
+    flow:
+      - get:
+          url: "/"
+          expect:
+            - statusCode: 200
+      - get:
+          url: "/dashboard"
+          expect:
+            - statusCode: 200

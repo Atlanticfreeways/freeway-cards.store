@@ -1,0 +1,17 @@
+{
+  "name": "freeway-cards-store",
+  "version": "1.0.0",
+  "description": "Freeway Cards Store - Digital Gift Card Platform",
+  "main": "frontend/index.html",
+  "scripts": {
+    "build": "echo 'Static site - no build needed'",
+    "start": "echo 'Static site deployment'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Atlanticfreeways/freeway-cards.store.git"
+  },
+  "keywords": ["gift-cards", "digital-cards", "e-commerce"],
+  "author": "Atlantic Freeways",
+  "license": "MIT"
+}

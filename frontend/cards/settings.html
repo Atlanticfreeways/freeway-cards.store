@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Settings - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .settings-section {
+            margin-bottom: 24px;
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .toggle-switch.active::after {
+            transform: translateX(26px);
+        }
+        .limit-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .limit-input input {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+        .merchant-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-top: 12px;
+        }
+        .merchant-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .merchant-item:last-child {
+            border-bottom: none;
+        }
+        .add-merchant {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .add-merchant input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+        .notification-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="dashboard-nav">
+                <a href="../dashboard.html" class="nav-brand">Freeway Cards</a>
+                <div class="nav-links">
+                    <a href="../dashboard.html">Dashboard</a>
+                    <a href="../wallet/index.html">Wallet</a>
+                    <a href="../dashboard/profile.html">Profile</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <button onclick="goBack()" style="background: none; border: none; font-size: 20px; cursor: pointer; margin-right: 12px;">←</button>
+                <h1 id="cardTitle">Card Settings</h1>
+            </div>
+
+            <!-- Spending Limits -->
+            <div class="card settings-section">
+                <h2>💰 Spending Limits</h2>
+                <div class="setting-item">
+                    <div>
+                        <div style="font-weight: 500;">Daily Limit</div>
+                        <div style="font-size: 14px; color: #666;">Maximum amount per day</div>
+                    </div>
+                    <div class="limit-input">
+                        <span>$</span>
+                        <input type="number" id="dailyLimit" min="10" max="10000" step="10">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div style="font-weight: 500;">Monthly Limit</div>
+                        <div style="font-size: 14px; color: #666;">Maximum amount per month</div>
+                    </div>
+                    <div class="limit-input">
+                        <span>$</span>
+                        <input type="number" id="monthlyLimit" min="100" max="100000" step="100">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div style="font-weight: 500;">Per Transaction Limit</div>
+                        <div style="font-size: 14px; color: #666;">Maximum amount per transaction</div>
+                    </div>
+                    <div class="limit-input">
+                        <span>$</span>
+                        <input type="number" id="transactionLimit" min="1" max="5000" step="1" value="1000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Controls -->
+            <div class="card settings-section">
+                <h2>🛡️ Usage Controls</h2>
+                <div class="setting-item">
+                    <div>
+                        <div style="font-weight: 500;">Online Purchases Only</div>
+                        <div style="font-size: 14px; color: #666;">Disable in-store transactions</div>
+                    </div>
+                    <div class="toggle-switch active" id="onlineOnlyToggle" onclick="toggleSetting('onlineOnly')"></div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div style="font-weight: 500;">International Transactions</div>
+                        <div style="font-size: 14px; color: #666;">Allow purchases outside your country</div>
+                    </div>
+                    <div class="toggle-switch" id="internationalToggle" onclick="toggleSetting('international')"></div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div style="font-weight: 500;">ATM Withdrawals</div>
+                        <div style="font-size: 14px; color: #666;">Allow cash withdrawals</div>
+                    </div>
+                    <div class="toggle-switch" id="atmToggle" onclick="toggleSetting('atm')"></div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div style="font-weight: 500;">Contactless Payments</div>
+                        <div style="font-size: 14px; color: #666;">Enable tap-to-pay transactions</div>
+                    </div>
+                    <div class="toggle-switch active" id="contactlessToggle" onclick="toggleSetting('contactless')"></div>
+                </div>
+            </div>
+
+            <!-- Merchant Restrictions -->
+            <div class="card settings-section">
+                <h2>🏪 Merchant Restrictions</h2>
+                <div style="margin-bottom: 16px;">
+                    <div style="font-weight: 500; margin-bottom: 8px;">Blocked Merchants</div>
+                    <div style="font-size: 14px; color: #666;">Transactions from these merchants will be declined</div>
+                </div>
+                <div class="merchant-list" id="blockedMerchants">
+                    <div style="text-align: center; padding: 20px; color: #666;">No blocked merchants</div>
+                </div>
+                <div class="add-merchant">
+                    <input type="text" id="merchantInput" placeholder="Enter merchant name">
+                    <button class="btn btn-secondary" onclick="addBlockedMerchant()">Block</button>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="card settings-section">
+                <h2>🔔 Notifications</h2>
+                <div class="notification-item">
+                    <div>
+                        <div style="font-weight: 500;">Transaction Alerts</div>
+                        <div style="font-size: 14px; color: #666;">Get notified for all transactions</div>
+                    </div>
+                    <div class="toggle-switch active" id="transactionAlertsToggle" onclick="toggleNotification('transactionAlerts')"></div>
+                </div>
+                <div class="notification-item">
+                    <div>
+                        <div style="font-weight: 500;">Large Purchase Alerts</div>
+                        <div style="font-size: 14px; color: #666;">Notify for transactions over $100</div>
+                    </div>
+                    <div class="toggle-switch active" id="largePurchaseToggle" onclick="toggleNotification('largePurchase')"></div>
+                </div>
+                <div class="notification-item">
+                    <div>
+                        <div style="font-weight: 500;">Declined Transaction Alerts</div>
+                        <div style="font-size: 14px; color: #666;">Notify when transactions are declined</div>
+                    </div>
+                    <div class="toggle-switch active" id="declinedToggle" onclick="toggleNotification('declined')"></div>
+                </div>
+                <div class="notification-item">
+                    <div>
+                        <div style="font-weight: 500;">Low Balance Alerts</div>
+                        <div style="font-size: 14px; color: #666;">Notify when balance is low</div>
+                    </div>
+                    <div class="toggle-switch active" id="lowBalanceToggle" onclick="toggleNotification('lowBalance')"></div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="card">
+                <button class="btn btn-primary" onclick="saveSettings()" style="width: 100%;" id="saveBtn">
+                    Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCard = null;
+        let cardSettings = {
+            onlineOnly: true,
+            international: false,
+            atm: false,
+            contactless: true,
+            blockedMerchants: [],
+            notifications: {
+                transactionAlerts: true,
+                largePurchase: true,
+                declined: true,
+                lowBalance: true
+            }
+        };
+
+        function loadCardSettings() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cardId = urlParams.get('id');
+            
+            if (!cardId) {
+                alert('Card not found');
+                window.location.href = '../dashboard.html';
+                return;
+            }
+
+            const cards = JSON.parse(localStorage.getItem('userCards') || '[]');
+            currentCard = cards.find(card => card.id === cardId);
+            
+            if (!currentCard) {
+                alert('Card not found');
+                window.location.href = '../dashboard.html';
+                return;
+            }
+
+            document.getElementById('cardTitle').textContent = `${currentCard.cardName || 'Card'} Settings`;
+            
+            // Load existing settings
+            if (currentCard.settings) {
+                cardSettings = { ...cardSettings, ...currentCard.settings };
+            }
+            
+            // Populate form
+            document.getElementById('dailyLimit').value = currentCard.dailyLimit || 500;
+            document.getElementById('monthlyLimit').value = currentCard.monthlyLimit || 5000;
+            
+            // Update toggles
+            updateToggle('onlineOnlyToggle', cardSettings.onlineOnly);
+            updateToggle('internationalToggle', cardSettings.international);
+            updateToggle('atmToggle', cardSettings.atm);
+            updateToggle('contactlessToggle', cardSettings.contactless);
+            
+            // Update notification toggles
+            updateToggle('transactionAlertsToggle', cardSettings.notifications.transactionAlerts);
+            updateToggle('largePurchaseToggle', cardSettings.notifications.largePurchase);
+            updateToggle('declinedToggle', cardSettings.notifications.declined);
+            updateToggle('lowBalanceToggle', cardSettings.notifications.lowBalance);
+            
+            // Load blocked merchants
+            updateBlockedMerchantsList();
+        }
+
+        function updateToggle(toggleId, isActive) {
+            const toggle = document.getElementById(toggleId);
+            if (isActive) {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
+        }
+
+        function toggleSetting(setting) {
+            cardSettings[setting] = !cardSettings[setting];
+            updateToggle(setting + 'Toggle', cardSettings[setting]);
+        }
+
+        function toggleNotification(notification) {
+            cardSettings.notifications[notification] = !cardSettings.notifications[notification];
+            updateToggle(notification + 'Toggle', cardSettings.notifications[notification]);
+        }
+
+        function addBlockedMerchant() {
+            const merchantInput = document.getElementById('merchantInput');
+            const merchantName = merchantInput.value.trim();
+            
+            if (merchantName && !cardSettings.blockedMerchants.includes(merchantName)) {
+                cardSettings.blockedMerchants.push(merchantName);
+                merchantInput.value = '';
+                updateBlockedMerchantsList();
+            }
+        }
+
+        function removeBlockedMerchant(merchantName) {
+            cardSettings.blockedMerchants = cardSettings.blockedMerchants.filter(m => m !== merchantName);
+            updateBlockedMerchantsList();
+        }
+
+        function updateBlockedMerchantsList() {
+            const container = document.getElementById('blockedMerchants');
+            
+            if (cardSettings.blockedMerchants.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">No blocked merchants</div>';
+                return;
+            }
+            
+            container.innerHTML = cardSettings.blockedMerchants.map(merchant => `
+                <div class="merchant-item">
+                    <span>${merchant}</span>
+                    <button onclick="removeBlockedMerchant('${merchant}')" style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function saveSettings() {
+            const dailyLimit = parseInt(document.getElementById('dailyLimit').value);
+            const monthlyLimit = parseInt(document.getElementById('monthlyLimit').value);
+            const transactionLimit = parseInt(document.getElementById('transactionLimit').value);
+            
+            if (dailyLimit > monthlyLimit) {
+                alert('Daily limit cannot be higher than monthly limit');
+                return;
+            }
+            
+            // Update card with new settings
+            currentCard.dailyLimit = dailyLimit;
+            currentCard.monthlyLimit = monthlyLimit;
+            currentCard.transactionLimit = transactionLimit;
+            currentCard.onlineOnly = cardSettings.onlineOnly;
+            currentCard.settings = cardSettings;
+            
+            // Save to localStorage
+            const cards = JSON.parse(localStorage.getItem('userCards') || '[]');
+            const cardIndex = cards.findIndex(card => card.id === currentCard.id);
+            if (cardIndex !== -1) {
+                cards[cardIndex] = currentCard;
+                localStorage.setItem('userCards', JSON.stringify(cards));
+            }
+            
+            // Show success message
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '✅ Settings Saved!';
+            saveBtn.disabled = true;
+            
+            setTimeout(() => {
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+            }, 2000);
+        }
+
+        function goBack() {
+            window.location.href = `details.html?id=${currentCard.id}`;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Initialize
+        loadCardSettings();
+    </script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .verify-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .verify-card {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .status-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+        }
+        .status-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        .status-message {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .pending {
+            color: #ffc107;
+        }
+        .resend-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 24px;
+        }
+        .countdown {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        @media (max-width: 768px) {
+            .verify-card {
+                padding: 30px 20px;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="verify-container">
+        <div class="verify-card">
+            <!-- Loading State -->
+            <div id="loadingState">
+                <div class="status-icon">⏳</div>
+                <div class="status-title">Verifying Email...</div>
+                <div class="status-message">Please wait while we verify your email address.</div>
+            </div>
+
+            <!-- Success State -->
+            <div id="successState" style="display: none;">
+                <div class="status-icon success">✅</div>
+                <div class="status-title success">Email Verified!</div>
+                <div class="status-message">
+                    Your email address has been successfully verified. You can now access all features of your Freeway Cards account.
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="goToDashboard()">
+                        🏠 Go to Dashboard
+                    </button>
+                    <button class="btn btn-secondary" onclick="goToLogin()">
+                        🔑 Login
+                    </button>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" style="display: none;">
+                <div class="status-icon error">❌</div>
+                <div class="status-title error">Verification Failed</div>
+                <div class="status-message" id="errorMessage">
+                    The verification link is invalid or has expired. Please request a new verification email.
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="resendVerification()">
+                        📧 Resend Email
+                    </button>
+                    <button class="btn btn-secondary" onclick="goToLogin()">
+                        🔑 Back to Login
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resend Section -->
+            <div class="resend-section" id="resendSection" style="display: none;">
+                <h3>📧 Resend Verification Email</h3>
+                <p>Enter your email address to receive a new verification link.</p>
+                
+                <form id="resendForm">
+                    <div class="form-group">
+                        <input type="email" id="resendEmail" placeholder="Enter your email address" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;" id="resendBtn">
+                        Send Verification Email
+                    </button>
+                </form>
+                
+                <div id="resendSuccess" style="display: none; margin-top: 16px; color: #28a745;">
+                    ✅ Verification email sent! Please check your inbox and spam folder.
+                </div>
+                
+                <div id="resendCooldown" style="display: none; margin-top: 16px; color: #666;">
+                    Please wait <span class="countdown" id="countdown">60</span> seconds before requesting another email.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/ui-components.js"></script>
+    <script>
+        let verificationToken = null;
+        let resendCooldownTimer = null;
+
+        // Extract token from URL
+        function getVerificationToken() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('token') || window.location.pathname.split('/').pop();
+        }
+
+        // Verify email with token
+        async function verifyEmail(token) {
+            try {
+                // Simulate API call to verify email
+                const response = await fetch('/api/auth/verify-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showSuccessState();
+                    
+                    // Store user data if provided
+                    if (data.user) {
+                        localStorage.setItem('userData', JSON.stringify(data.user));
+                        localStorage.setItem('token', data.token);
+                    }
+                } else {
+                    const error = await response.json();
+                    showErrorState(error.message);
+                }
+            } catch (error) {
+                // Demo verification logic
+                if (token && token.length > 10) {
+                    // Simulate different scenarios based on token
+                    if (token.includes('expired')) {
+                        showErrorState('This verification link has expired. Please request a new one.');
+                    } else if (token.includes('invalid')) {
+                        showErrorState('This verification link is invalid. Please check your email for the correct link.');
+                    } else if (token.includes('used')) {
+                        showErrorState('This verification link has already been used. Your email may already be verified.');
+                    } else {
+                        // Valid token - show success
+                        setTimeout(() => {
+                            showSuccessState();
+                            
+                            // Mark email as verified in demo
+                            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                            userData.emailVerified = true;
+                            userData.verifiedAt = new Date().toISOString();
+                            localStorage.setItem('userData', JSON.stringify(userData));
+                        }, 2000);
+                        return;
+                    }
+                } else {
+                    showErrorState('Invalid verification link. Please check your email for the correct link.');
+                }
+            }
+        }
+
+        function showSuccessState() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+            document.getElementById('successState').style.display = 'block';
+            
+            ui.showToast({
+                type: 'success',
+                title: 'Email Verified!',
+                message: 'Your account is now fully activated.'
+            });
+        }
+
+        function showErrorState(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('successState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+            
+            if (message) {
+                document.getElementById('errorMessage').textContent = message;
+            }
+        }
+
+        function goToDashboard() {
+            window.location.href = '../dashboard.html';
+        }
+
+        function goToLogin() {
+            window.location.href = '../login.html';
+        }
+
+        function resendVerification() {
+            document.getElementById('resendSection').style.display = 'block';
+            document.getElementById('resendSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Handle resend form
+        document.getElementById('resendForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('resendEmail').value;
+            const btn = document.getElementById('resendBtn');
+            
+            ui.showLoading(btn, '📧 Sending...');
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                ui.hideLoading(btn);
+                document.getElementById('resendSuccess').style.display = 'block';
+                document.getElementById('resendForm').style.display = 'none';
+                
+                // Start cooldown
+                startResendCooldown();
+                
+                ui.showToast({
+                    type: 'success',
+                    title: 'Email Sent!',
+                    message: 'Please check your inbox for the verification link.'
+                });
+                
+            } catch (error) {
+                ui.hideLoading(btn);
+                ui.showToast({
+                    type: 'error',
+                    title: 'Failed to Send',
+                    message: 'Please try again or contact support.'
+                });
+            }
+        });
+
+        function startResendCooldown() {
+            let seconds = 60;
+            document.getElementById('resendCooldown').style.display = 'block';
+            
+            resendCooldownTimer = setInterval(() => {
+                seconds--;
+                document.getElementById('countdown').textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(resendCooldownTimer);
+                    document.getElementById('resendCooldown').style.display = 'none';
+                    document.getElementById('resendForm').style.display = 'block';
+                    document.getElementById('resendSuccess').style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        // Initialize verification process
+        document.addEventListener('DOMContentLoaded', function() {
+            verificationToken = getVerificationToken();
+            
+            if (verificationToken) {
+                verifyEmail(verificationToken);
+            } else {
+                showErrorState('No verification token provided. Please check your email for the verification link.');
+            }
+        });
+
+        // Auto-redirect after successful verification
+        function autoRedirect() {
+            let countdown = 5;
+            const redirectMsg = document.createElement('div');
+            redirectMsg.style.cssText = 'margin-top: 20px; padding: 12px; background: #e3f2fd; border-radius: 8px; font-size: 14px;';
+            redirectMsg.innerHTML = `Redirecting to dashboard in <span id="redirectCountdown">${countdown}</span> seconds...`;
+            
+            document.getElementById('successState').appendChild(redirectMsg);
+            
+            const redirectTimer = setInterval(() => {
+                countdown--;
+                document.getElementById('redirectCountdown').textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(redirectTimer);
+                    goToDashboard();
+                }
+            }, 1000);
+        }
+
+        // Add auto-redirect to success state
+        function showSuccessStateWithRedirect() {
+            showSuccessState();
+            setTimeout(autoRedirect, 2000);
+        }
+    </script>
+</body>
+</html>

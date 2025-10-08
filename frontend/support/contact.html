@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Support - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .contact-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .priority-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .priority-btn {
+            padding: 12px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .priority-btn.selected {
+            border-color: var(--primary);
+            background: rgba(0,123,255,0.05);
+        }
+        .priority-low { border-color: #28a745; }
+        .priority-medium { border-color: #ffc107; }
+        .priority-high { border-color: #dc3545; }
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(0,123,255,0.05);
+        }
+        .file-upload.dragover {
+            border-color: var(--primary);
+            background: rgba(0,123,255,0.1);
+        }
+        .uploaded-files {
+            margin-top: 12px;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .response-time {
+            background: #e3f2fd;
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .priority-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="dashboard-nav">
+                <a href="../dashboard.html" class="nav-brand">Freeway Cards</a>
+                <div class="nav-links">
+                    <a href="../dashboard.html">Dashboard</a>
+                    <a href="../wallet/index.html">Wallet</a>
+                    <a href="../dashboard/profile.html">Profile</a>
+                    <a href="index.html">Support</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="contact-header">
+        <h1>📧 Contact Support</h1>
+        <p>We're here to help! Send us a message and we'll get back to you soon.</p>
+    </div>
+
+    <div class="container">
+        <div class="contact-form">
+            <div class="response-time">
+                <strong>📅 Expected Response Time</strong>
+                <div style="margin-top: 8px;">
+                    <span style="color: #28a745;">Low Priority:</span> 48-72 hours •
+                    <span style="color: #ffc107;">Medium Priority:</span> 12-24 hours •
+                    <span style="color: #dc3545;">High Priority:</span> 2-6 hours
+                </div>
+            </div>
+
+            <div class="card">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" required placeholder="Brief description of your issue">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option value="">Select a category</option>
+                            <option value="account">Account Issues</option>
+                            <option value="cards">Virtual Card Problems</option>
+                            <option value="payments">Payment & Funding</option>
+                            <option value="security">Security Concerns</option>
+                            <option value="billing">Billing Questions</option>
+                            <option value="technical">Technical Issues</option>
+                            <option value="feature">Feature Request</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Priority Level</label>
+                        <div class="priority-selector">
+                            <div class="priority-btn priority-low" onclick="selectPriority('low', this)">
+                                <div style="font-size: 20px; margin-bottom: 4px;">🟢</div>
+                                <strong>Low</strong>
+                                <div style="font-size: 12px;">General questions</div>
+                            </div>
+                            <div class="priority-btn priority-medium selected" onclick="selectPriority('medium', this)">
+                                <div style="font-size: 20px; margin-bottom: 4px;">🟡</div>
+                                <strong>Medium</strong>
+                                <div style="font-size: 12px;">Account issues</div>
+                            </div>
+                            <div class="priority-btn priority-high" onclick="selectPriority('high', this)">
+                                <div style="font-size: 20px; margin-bottom: 4px;">🔴</div>
+                                <strong>High</strong>
+                                <div style="font-size: 12px;">Urgent problems</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" rows="6" required placeholder="Please describe your issue in detail. Include any error messages, steps you've taken, and what you expected to happen."></textarea>
+                        <small style="color: #666;">Be as specific as possible to help us resolve your issue quickly.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Attachments (Optional)</label>
+                        <div class="file-upload" onclick="document.getElementById('fileInput').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <div style="font-size: 32px; margin-bottom: 12px;">📎</div>
+                            <div><strong>Click to upload</strong> or drag files here</div>
+                            <div style="font-size: 14px; color: #666; margin-top: 8px;">Screenshots, documents, or logs (Max 10MB each)</div>
+                        </div>
+                        <input type="file" id="fileInput" multiple accept="image/*,.pdf,.txt,.log" style="display: none;" onchange="handleFiles(this.files)">
+                        <div class="uploaded-files" id="uploadedFiles"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactMethod">Preferred Contact Method</label>
+                        <select id="contactMethod">
+                            <option value="email">Email</option>
+                            <option value="phone">Phone Call</option>
+                            <option value="sms">SMS</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="urgentCheckbox">
+                            This is an urgent security issue that requires immediate attention
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;" id="submitBtn">
+                        📤 Send Message
+                    </button>
+                </form>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card" style="margin-top: 30px;">
+                <h3>🚀 Quick Actions</h3>
+                <div style="display: grid; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="checkStatus()">📋 Check Ticket Status</button>
+                    <button class="btn btn-secondary" onclick="window.location.href='index.html'">❓ Browse FAQ</button>
+                    <button class="btn btn-secondary" onclick="reportBug()">🐛 Report Bug</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPriority = 'medium';
+        let uploadedFiles = [];
+
+        function selectPriority(priority, element) {
+            selectedPriority = priority;
+            document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        }
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+                    return;
+                }
+                
+                uploadedFiles.push(file);
+                displayUploadedFile(file);
+            });
+        }
+
+        function displayUploadedFile(file) {
+            const container = document.getElementById('uploadedFiles');
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <span>📄 ${file.name} (${formatFileSize(file.size)})</span>
+                <button onclick="removeFile('${file.name}')" style="background: none; border: none; color: #dc3545; cursor: pointer;">✕</button>
+            `;
+            container.appendChild(fileItem);
+        }
+
+        function removeFile(fileName) {
+            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+            const container = document.getElementById('uploadedFiles');
+            Array.from(container.children).forEach(item => {
+                if (item.textContent.includes(fileName)) {
+                    item.remove();
+                }
+            });
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '📤 Sending...';
+            submitBtn.disabled = true;
+
+            // Simulate form submission
+            setTimeout(() => {
+                const ticketId = 'FC-' + Date.now().toString().slice(-6);
+                
+                submitBtn.textContent = '✅ Message Sent!';
+                
+                setTimeout(() => {
+                    alert(`Thank you! Your support ticket #${ticketId} has been created. We'll respond within the expected timeframe based on your priority level.`);
+                    
+                    // Reset form
+                    document.getElementById('contactForm').reset();
+                    uploadedFiles = [];
+                    document.getElementById('uploadedFiles').innerHTML = '';
+                    selectPriority('medium', document.querySelector('.priority-medium'));
+                    
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }, 1000);
+            }, 2000);
+        });
+
+        function checkStatus() {
+            const ticketId = prompt('Enter your ticket ID (e.g., FC-123456):');
+            if (ticketId) {
+                alert(`Ticket ${ticketId} Status: In Progress\nExpected resolution: Within 24 hours\nLast update: 2 hours ago`);
+            }
+        }
+
+        function reportBug() {
+            document.getElementById('category').value = 'technical';
+            document.getElementById('subject').value = 'Bug Report: ';
+            document.getElementById('subject').focus();
+            selectPriority('high', document.querySelector('.priority-high'));
+        }
+
+        // Auto-adjust priority based on category
+        document.getElementById('category').addEventListener('change', function() {
+            const category = this.value;
+            if (category === 'security') {
+                selectPriority('high', document.querySelector('.priority-high'));
+            } else if (category === 'technical' || category === 'account') {
+                selectPriority('medium', document.querySelector('.priority-medium'));
+            }
+        });
+    </script>
+</body>
+</html>

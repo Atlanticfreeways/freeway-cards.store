@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .password-strength {
+            font-size: 12px;
+            margin-top: 5px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .password-strength.weak { background: #ffebee; color: #c62828; }
+        .password-strength.fair { background: #fff3e0; color: #ef6c00; }
+        .password-strength.good { background: #f3e5f5; color: #7b1fa2; }
+        .password-strength.strong { background: #e8f5e8; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="card">
+            <div class="auth-header" style="text-align: center; margin-bottom: 2rem;">
+                <h1>🚀 Create Account</h1>
+                <p>Join thousands using Freeway Cards</p>
+            </div>
+
+            <!-- Google OAuth Button -->
+            <button class="google-btn" onclick="signUpWithGoogle()" style="width: 100%; background: #4285f4; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; margin-bottom: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px;">
+                <span>🔍</span>
+                Continue with Google
+            </button>
+
+            <div class="divider" style="text-align: center; margin: 1.5rem 0; position: relative;">
+                <span style="background: white; padding: 0 1rem; color: #666;">or</span>
+            </div>
+            
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="name">👤 Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                    <div class="error-message"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">📧 Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                    <div class="error-message"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">🔒 Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Create a strong password">
+                    <div class="password-strength" id="passwordStrength"></div>
+                    <div class="error-message"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">🔐 Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password">
+                    <div class="error-message"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="accountType">🏢 Account Type</label>
+                    <select id="accountType" name="accountType" required>
+                        <option value="">Select Account Type</option>
+                        <option value="individual">👤 Individual - Personal use</option>
+                        <option value="business">🏢 Business - Team & company</option>
+                    </select>
+                    <div class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <span class="checkmark"></span>
+                        I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
+                    </label>
+                    <div class="error-message"></div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; min-height: 48px;">🚀 Create Account</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <p>Already have an account? <a href="../login.html">🔑 Sign In</a></p>
+                <p><a href="../index.html">🏠 Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/validation.js"></script>
+    <script src="../js/api.js"></script>
+    <script>
+        // Initialize form validation
+        const signupForm = new FormValidator(document.getElementById('signupForm'));
+        
+        signupForm
+            .addRule('name', [ValidationRules.required()])
+            .addRule('email', [ValidationRules.required(), ValidationRules.email()])
+            .addRule('password', [ValidationRules.required(), ValidationRules.password()])
+            .addRule('confirmPassword', [ValidationRules.required(), ValidationRules.match('password')])
+            .addRule('accountType', [ValidationRules.required()]);
+
+        // Password strength indicator
+        document.getElementById('password').addEventListener('input', (e) => {
+            updatePasswordStrength(e.target.value, document.getElementById('passwordStrength'));
+        });
+
+        // Google OAuth Integration
+        function signUpWithGoogle() {
+            alert('🔄 Google OAuth integration coming soon!');
+        }
+
+        // Form submission with API integration
+        signupForm.onSubmit = async function(formData) {
+            const submitBtn = document.querySelector('#signupForm button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '🔄 Creating account...';
+            
+            try {
+                const response = await fetch(window.api ? window.api.baseURL + '/auth/register' : '/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('✅ Account created! Please check your email for verification.');
+                    window.location.href = 'verify.html?email=' + encodeURIComponent(formData.email);
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Registration failed');
+                }
+            } catch (error) {
+                alert('❌ Registration failed: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Create Account';
+            }
+        };
+    </script>
+</body>
+</html>

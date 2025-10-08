@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freeway Cards - Virtual Cards for Everyone</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="css/accessibility.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-lg {
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            min-height: 48px;
+        }
+        .features {
+            padding: 60px 0;
+            background: #f8f9fa;
+        }
+        .features h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .card-types {
+            padding: 60px 0;
+        }
+        .card-types h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+        }
+        .types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .type-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+        }
+        .type-card.featured {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+        .price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 1rem 0;
+        }
+        .price span {
+            font-size: 1rem;
+            color: #666;
+        }
+        .type-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+        }
+        .type-card li {
+            padding: 0.5rem 0;
+        }
+        .cta {
+            background: #667eea;
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-actions { flex-direction: column; align-items: center; }
+            .btn-lg { width: 100%; max-width: 300px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .types-grid { grid-template-columns: 1fr; }
+            .type-card.featured { transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <button id="installBtn" class="btn btn-primary" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000;">Install App</button>
+    <button id="themeToggle" class="btn" style="position: fixed; top: 20px; right: 20px; z-index: 1000; width: 44px; height: 44px;">🔄</button>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>💳 Virtual Cards for the Digital Age</h1>
+            <p class="hero-subtitle">Create instant virtual cards, fund with crypto, and spend anywhere. Secure, fast, and global.</p>
+            <div class="hero-actions">
+                <a href="auth/signup.html" class="btn btn-primary btn-lg">🚀 Get Started</a>
+                <a href="login.html" class="btn btn-secondary btn-lg">🔑 Sign In</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>💎 Why Choose Freeway Cards?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant Cards</h3>
+                    <p>Create virtual cards in seconds. No waiting, no paperwork.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">₿</div>
+                    <h3>Crypto Funding</h3>
+                    <p>Fund your wallet with Bitcoin, USDT, and other cryptocurrencies.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Secure & Safe</h3>
+                    <p>Bank-level security with real-time fraud protection.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Global Access</h3>
+                    <p>Use your cards anywhere Visa and Mastercard are accepted.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Card Types Section -->
+    <section class="card-types">
+        <div class="container">
+            <h2>🎯 Choose Your Card Type</h2>
+            <div class="types-grid">
+                <div class="type-card">
+                    <h3>⚡ Instant Cards</h3>
+                    <div class="price">$2.99 <span>/card</span></div>
+                    <ul>
+                        <li>✅ Create instantly</li>
+                        <li>✅ One-time fee</li>
+                        <li>✅ Perfect for online shopping</li>
+                        <li>✅ No monthly charges</li>
+                    </ul>
+                    <a href="auth/signup.html" class="btn btn-primary">Get Instant Card</a>
+                </div>
+                <div class="type-card featured">
+                    <h3>🔄 Subscription Cards</h3>
+                    <div class="price">$9.99 <span>/month</span></div>
+                    <ul>
+                        <li>✅ Unlimited cards</li>
+                        <li>✅ Higher limits</li>
+                        <li>✅ Priority support</li>
+                        <li>✅ Advanced analytics</li>
+                    </ul>
+                    <a href="auth/signup.html" class="btn btn-primary">Start Subscription</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>🚀 Ready to Get Started?</h2>
+            <p>Join thousands of users who trust Freeway Cards for their virtual payment needs.</p>
+            <a href="auth/signup.html" class="btn btn-primary btn-lg">Create Your Account</a>
+        </div>
+    </section>
+    
+    <script src="js/validation.js"></script>
+    <script src="js/pwa.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        }
+
+        // Initialize login form validation
+        const loginForm = new FormValidator(document.getElementById('loginForm'));
+        loginForm
+            .addRule('email', [ValidationRules.required(), ValidationRules.email()])
+            .addRule('password', [ValidationRules.required()]);
+
+        loginForm.onSubmit = function() {
+            setTimeout(() => {
+                this.form.classList.remove('loading');
+                // Simulate successful login
+                window.location.href = 'dashboard/index.html';
+            }, 1500);
+        };
+    </script>
+</body>
+</html>

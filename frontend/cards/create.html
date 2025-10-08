@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Card - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .card-preview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-preview::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin: 16px 0;
+        }
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+        }
+        .card-type-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .card-type {
+            padding: 20px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .card-type.selected {
+            border-color: var(--primary);
+            background: rgba(0,123,255,0.05);
+        }
+        .subscription-options {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .subscription-option {
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .subscription-option.selected {
+            border-color: var(--primary);
+            background: rgba(0,123,255,0.05);
+        }
+        .limits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 768px) {
+            .limits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="dashboard-nav">
+                <a href="../dashboard.html" class="nav-brand">Freeway Cards</a>
+                <div class="nav-links">
+                    <a href="../dashboard.html">Dashboard</a>
+                    <a href="../wallet/index.html">Wallet</a>
+                    <a href="../dashboard/profile.html">Profile</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <h1>💳 Create New Card</h1>
+            
+            <!-- Card Preview -->
+            <div class="card-preview" id="cardPreview">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <div style="font-size: 14px; opacity: 0.8;">FREEWAY CARDS</div>
+                        <div style="font-size: 12px; opacity: 0.6;">VIRTUAL CARD</div>
+                    </div>
+                    <div id="cardBrand" style="font-size: 24px;">💳</div>
+                </div>
+                <div class="card-number" id="previewNumber">•••• •••• •••• ••••</div>
+                <div class="card-info">
+                    <div>
+                        <div style="font-size: 12px; opacity: 0.6;">CARDHOLDER</div>
+                        <div id="previewName">YOUR NAME</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; opacity: 0.6;">EXPIRES</div>
+                        <div id="previewExpiry">••/••</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Type Selection -->
+            <div class="card">
+                <h2>Card Network</h2>
+                <div class="card-type-selector">
+                    <div class="card-type selected" onclick="selectCardType('visa')">
+                        <div style="font-size: 32px; margin-bottom: 8px;">💳</div>
+                        <h4>Visa</h4>
+                        <p>Widely accepted worldwide</p>
+                    </div>
+                    <div class="card-type" onclick="selectCardType('mastercard')">
+                        <div style="font-size: 32px; margin-bottom: 8px;">💳</div>
+                        <h4>Mastercard</h4>
+                        <p>Global acceptance network</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscription Type -->
+            <div class="card">
+                <h2>Card Type</h2>
+                <div class="subscription-options">
+                    <div class="subscription-option selected" onclick="selectSubscription('instant')">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4>⚡ Instant Card</h4>
+                                <p>One-time fee • Use immediately</p>
+                            </div>
+                            <div style="font-weight: bold; color: var(--primary);">$2.99</div>
+                        </div>
+                    </div>
+                    <div class="subscription-option" onclick="selectSubscription('monthly')">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4>📅 Monthly Card</h4>
+                                <p>Recurring monthly • Multiple uses</p>
+                            </div>
+                            <div style="font-weight: bold; color: var(--primary);">$4.99/mo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Details -->
+            <div class="card">
+                <h2>Card Details</h2>
+                <div class="form-group">
+                    <label for="cardName">Card Name (Optional)</label>
+                    <input type="text" id="cardName" placeholder="e.g., Shopping Card, Travel Card" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label for="cardholderName">Cardholder Name</label>
+                    <input type="text" id="cardholderName" placeholder="Enter name as it appears on ID" required>
+                </div>
+            </div>
+
+            <!-- Spending Limits -->
+            <div class="card">
+                <h2>Spending Limits</h2>
+                <div class="limits-grid">
+                    <div class="form-group">
+                        <label for="dailyLimit">Daily Limit</label>
+                        <select id="dailyLimit">
+                            <option value="100">$100</option>
+                            <option value="250">$250</option>
+                            <option value="500" selected>$500</option>
+                            <option value="1000">$1,000</option>
+                            <option value="2500">$2,500</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="monthlyLimit">Monthly Limit</label>
+                        <select id="monthlyLimit">
+                            <option value="1000">$1,000</option>
+                            <option value="2500">$2,500</option>
+                            <option value="5000" selected>$5,000</option>
+                            <option value="10000">$10,000</option>
+                            <option value="25000">$25,000</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="onlineOnly" checked>
+                        Online purchases only (recommended for security)
+                    </label>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="card">
+                <h2>Summary</h2>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <span>Card Type:</span>
+                    <span id="summaryType">Instant Visa Card</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <span>Daily Limit:</span>
+                    <span id="summaryDaily">$500</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <span>Monthly Limit:</span>
+                    <span id="summaryMonthly">$5,000</span>
+                </div>
+                <hr style="margin: 16px 0;">
+                <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px;">
+                    <span>Total Cost:</span>
+                    <span id="totalCost">$2.99</span>
+                </div>
+                
+                <button class="btn btn-primary" onclick="createCard()" style="width: 100%; margin-top: 20px;" id="createBtn">
+                    Create Card
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedCardType = 'visa';
+        let selectedSubscription = 'instant';
+        
+        function selectCardType(type) {
+            selectedCardType = type;
+            document.querySelectorAll('.card-type').forEach(ct => ct.classList.remove('selected'));
+            event.target.closest('.card-type').classList.add('selected');
+            updateSummary();
+        }
+        
+        function selectSubscription(type) {
+            selectedSubscription = type;
+            document.querySelectorAll('.subscription-option').forEach(so => so.classList.remove('selected'));
+            event.target.closest('.subscription-option').classList.add('selected');
+            updateSummary();
+        }
+        
+        function updateSummary() {
+            const typeText = `${selectedSubscription === 'instant' ? 'Instant' : 'Monthly'} ${selectedCardType === 'visa' ? 'Visa' : 'Mastercard'} Card`;
+            const cost = selectedSubscription === 'instant' ? '$2.99' : '$4.99/mo';
+            
+            document.getElementById('summaryType').textContent = typeText;
+            document.getElementById('totalCost').textContent = cost;
+            
+            const dailyLimit = document.getElementById('dailyLimit').value;
+            const monthlyLimit = document.getElementById('monthlyLimit').value;
+            document.getElementById('summaryDaily').textContent = `$${dailyLimit}`;
+            document.getElementById('summaryMonthly').textContent = `$${monthlyLimit}`;
+        }
+        
+        document.getElementById('cardholderName').addEventListener('input', function() {
+            const name = this.value.toUpperCase() || 'YOUR NAME';
+            document.getElementById('previewName').textContent = name;
+        });
+        
+        document.getElementById('dailyLimit').addEventListener('change', updateSummary);
+        document.getElementById('monthlyLimit').addEventListener('change', updateSummary);
+        
+        async function createCard() {
+            const cardholderName = document.getElementById('cardholderName').value.trim();
+            
+            if (!cardholderName) {
+                alert('Please enter cardholder name');
+                return;
+            }
+            
+            const btn = document.getElementById('createBtn');
+            btn.textContent = 'Creating Card...';
+            btn.disabled = true;
+            
+            try {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                const newCard = {
+                    id: 'card_' + Date.now(),
+                    number: generateCardNumber(),
+                    expiry: generateExpiry(),
+                    cvv: generateCVV(),
+                    type: selectedCardType,
+                    subscription: selectedSubscription,
+                    cardholderName: cardholderName,
+                    cardName: document.getElementById('cardName').value.trim() || `${selectedCardType.toUpperCase()} Card`,
+                    dailyLimit: parseInt(document.getElementById('dailyLimit').value),
+                    monthlyLimit: parseInt(document.getElementById('monthlyLimit').value),
+                    onlineOnly: document.getElementById('onlineOnly').checked,
+                    balance: 0,
+                    status: 'active',
+                    created: new Date().toISOString()
+                };
+                
+                const cards = JSON.parse(localStorage.getItem('userCards') || '[]');
+                cards.push(newCard);
+                localStorage.setItem('userCards', JSON.stringify(cards));
+                
+                alert('Card created successfully!');
+                window.location.href = `details.html?id=${newCard.id}`;
+                
+            } catch (error) {
+                alert('Failed to create card. Please try again.');
+                btn.textContent = 'Create Card';
+                btn.disabled = false;
+            }
+        }
+        
+        function generateCardNumber() {
+            const prefix = selectedCardType === 'visa' ? '4' : '5';
+            let number = prefix;
+            for (let i = 1; i < 16; i++) {
+                number += Math.floor(Math.random() * 10);
+            }
+            return number.replace(/(.{4})/g, '$1 ').trim();
+        }
+        
+        function generateExpiry() {
+            const now = new Date();
+            const expiry = new Date(now.getFullYear() + 3, now.getMonth());
+            return `${(expiry.getMonth() + 1).toString().padStart(2, '0')}/${expiry.getFullYear().toString().slice(-2)}`;
+        }
+        
+        function generateCVV() {
+            return Math.floor(Math.random() * 900 + 100).toString();
+        }
+        
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = '../index.html';
+            }
+        }
+        
+        updateSummary();
+    </script>
+</body>
+</html>

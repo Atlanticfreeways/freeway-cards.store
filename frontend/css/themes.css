@@ -1,0 +1,130 @@
+/* Theme System */
+:root {
+  --primary: #007bff;
+  --primary-dark: #0056b3;
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --light: #f8f9fa;
+  --dark: #343a40;
+  --border: #dee2e6;
+  --shadow: 0 2px 4px rgba(0,0,0,0.1);
+  --radius: 8px;
+}
+
+/* Dark Theme */
+.dark-theme {
+  --light: #1a1a1a;
+  --dark: #ffffff;
+  --border: #404040;
+  --shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.dark-theme body {
+  background: #121212;
+  color: #ffffff;
+}
+
+.dark-theme .card {
+  background: #1e1e1e;
+  border: 1px solid var(--border);
+}
+
+.dark-theme input,
+.dark-theme select,
+.dark-theme textarea {
+  background: #2a2a2a;
+  color: #ffffff;
+  border-color: var(--border);
+}
+
+.dark-theme .nav {
+  background: #1e1e1e;
+  border-bottom: 1px solid var(--border);
+}
+
+.dark-theme .wallet-header {
+  background: linear-gradient(135deg, #0056b3, #003d82);
+}
+
+.dark-theme .transaction-row:hover {
+  background: #2a2a2a;
+}
+
+.dark-theme .amount-btn {
+  background: #2a2a2a;
+  color: #ffffff;
+  border-color: var(--border);
+}
+
+.dark-theme .amount-btn.selected {
+  background: var(--primary);
+  color: white;
+}
+
+.dark-theme .payment-method {
+  background: #2a2a2a;
+  border-color: var(--border);
+}
+
+.dark-theme .card-design {
+  border-color: var(--border);
+}
+
+/* Theme Toggle Button */
+#themeToggle {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: all 0.3s ease;
+}
+
+#themeToggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.dark-theme #themeToggle {
+  background: rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Install Button */
+#installBtn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px 20px;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+#installBtn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  .dark-theme {
+    --primary: #4da6ff;
+    --success: #4dff4d;
+    --danger: #ff4d4d;
+    --border: #666666;
+  }
+}

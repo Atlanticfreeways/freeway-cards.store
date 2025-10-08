@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .filters {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .transaction-list {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .transaction-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s ease;
+        }
+        .transaction-row:hover {
+            background: var(--light);
+        }
+        .transaction-row:last-child {
+            border-bottom: none;
+        }
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 18px;
+        }
+        .transaction-icon.deposit {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+        .transaction-icon.purchase {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+        .transaction-icon.refund {
+            background: rgba(0, 123, 255, 0.1);
+            color: var(--primary);
+        }
+        .transaction-details {
+            flex: 1;
+        }
+        .transaction-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .transaction-meta {
+            font-size: 14px;
+            color: #666;
+        }
+        .transaction-amount {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .amount-positive {
+            color: var(--success);
+        }
+        .amount-negative {
+            color: var(--danger);
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--dark);
+        }
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="dashboard-nav">
+                <a href="../dashboard/index.html" class="nav-brand">Freeway Cards</a>
+                <div class="nav-links">
+                    <a href="../dashboard/index.html">Dashboard</a>
+                    <a href="index.html">Wallet</a>
+                    <a href="../dashboard/profile.html">Profile</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Transaction History</h1>
+        
+        <!-- Summary Stats -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center;">
+                <div>
+                    <div style="font-size: 24px; font-weight: bold; color: var(--success);" id="totalIncome">$0.00</div>
+                    <div style="color: #666; font-size: 14px;">Total Income</div>
+                </div>
+                <div>
+                    <div style="font-size: 24px; font-weight: bold; color: var(--danger);" id="totalSpent">$0.00</div>
+                    <div style="color: #666; font-size: 14px;">Total Spent</div>
+                </div>
+                <div>
+                    <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="transactionCount">0</div>
+                    <div style="color: #666; font-size: 14px;">Transactions</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="typeFilter">Transaction Type</label>
+                    <select id="typeFilter" onchange="filterTransactions()">
+                        <option value="all">All Types</option>
+                        <option value="crypto_deposit">Crypto Deposits</option>
+                        <option value="card_funding">Card Funding</option>
+                        <option value="purchase">Purchases</option>
+                        <option value="refund">Refunds</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="dateFilter">Date Range</label>
+                    <select id="dateFilter" onchange="filterTransactions()">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="3months">Last 3 Months</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter" onchange="filterTransactions()">
+                        <option value="all">All Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="declined">Declined</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="searchFilter">Search</label>
+                    <input type="text" id="searchFilter" placeholder="Search merchants..." onkeyup="filterTransactions()">
+                </div>
+            </div>
+            <div style="margin-top: 16px; display: flex; gap: 8px; align-items: center;">
+                <button class="btn btn-secondary" onclick="exportTransactions()">📊 Export CSV</button>
+                <button class="btn btn-secondary" onclick="clearFilters()">🔄 Clear Filters</button>
+                <span style="margin-left: auto; color: #666; font-size: 14px;" id="resultCount">0 transactions</span>
+            </div>
+        </div>
+
+        <div class="transaction-list" id="transactionList">
+            <!-- Transactions will be populated by JavaScript -->
+        </div>
+
+        <div class="pagination">
+            <a href="#" class="page-btn">‹ Previous</a>
+            <a href="#" class="page-btn active">1</a>
+            <a href="#" class="page-btn">2</a>
+            <a href="#" class="page-btn">3</a>
+            <a href="#" class="page-btn">Next ›</a>
+        </div>
+    </div>
+
+    <script>
+        let allTransactions = [];
+        
+        // Generate demo transactions
+        function generateDemoTransactions() {
+            const merchants = [
+                'Amazon', 'Netflix', 'Spotify', 'Uber', 'Starbucks', 'McDonald\'s', 'Target', 'Walmart',
+                'Apple Store', 'Google Play', 'Steam', 'PayPal', 'Airbnb', 'Booking.com'
+            ];
+            
+            const cryptoDeposits = ['Bitcoin Deposit', 'USDT Deposit', 'Ethereum Deposit'];
+            const cardFunding = ['Card Funding', 'Wallet Top-up', 'Balance Transfer'];
+            
+            const transactions = [];
+            const now = new Date();
+            
+            // Generate 50 demo transactions over the last 3 months
+            for (let i = 0; i < 50; i++) {
+                const daysAgo = Math.floor(Math.random() * 90);
+                const date = new Date(now.getTime() - (daysAgo * 24 * 60 * 60 * 1000));
+                
+                let transaction;
+                const rand = Math.random();
+                
+                if (rand < 0.15) {
+                    // Crypto deposit (15%)
+                    transaction = {
+                        id: `tx_${Date.now()}_${i}`,
+                        type: 'crypto_deposit',
+                        title: cryptoDeposits[Math.floor(Math.random() * cryptoDeposits.length)],
+                        amount: Math.floor(Math.random() * 500 + 50),
+                        date: date.toISOString(),
+                        status: 'completed',
+                        category: 'funding',
+                        cardId: null
+                    };
+                } else if (rand < 0.25) {
+                    // Card funding (10%)
+                    transaction = {
+                        id: `tx_${Date.now()}_${i}`,
+                        type: 'card_funding',
+                        title: cardFunding[Math.floor(Math.random() * cardFunding.length)],
+                        amount: Math.floor(Math.random() * 200 + 25),
+                        date: date.toISOString(),
+                        status: 'completed',
+                        category: 'funding',
+                        cardId: 'card_demo'
+                    };
+                } else if (rand < 0.95) {
+                    // Purchase (70%)
+                    const merchant = merchants[Math.floor(Math.random() * merchants.length)];
+                    transaction = {
+                        id: `tx_${Date.now()}_${i}`,
+                        type: 'purchase',
+                        title: merchant,
+                        amount: -(Math.floor(Math.random() * 150 + 5)),
+                        date: date.toISOString(),
+                        status: Math.random() > 0.05 ? 'completed' : 'declined',
+                        category: 'purchase',
+                        cardId: 'card_demo'
+                    };
+                } else {
+                    // Refund (5%)
+                    const merchant = merchants[Math.floor(Math.random() * merchants.length)];
+                    transaction = {
+                        id: `tx_${Date.now()}_${i}`,
+                        type: 'refund',
+                        title: `${merchant} Refund`,
+                        amount: Math.floor(Math.random() * 100 + 10),
+                        date: date.toISOString(),
+                        status: 'completed',
+                        category: 'refund',
+                        cardId: 'card_demo'
+                    };
+                }
+                
+                transactions.push(transaction);
+            }
+            
+            // Sort by date (newest first)
+            return transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+        
+        // Load transactions from localStorage or generate demo data
+        function loadTransactions() {
+            const stored = localStorage.getItem('userTransactions');
+            if (stored) {
+                allTransactions = JSON.parse(stored);
+            } else {
+                allTransactions = generateDemoTransactions();
+                localStorage.setItem('userTransactions', JSON.stringify(allTransactions));
+            }
+        }
+
+        function renderTransactions(transactionsToShow = allTransactions) {
+            const container = document.getElementById('transactionList');
+            
+            if (transactionsToShow.length === 0) {
+                container.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">No transactions found</div>';
+                return;
+            }
+            
+            container.innerHTML = transactionsToShow.map(transaction => {
+                const icon = getTransactionIcon(transaction.type);
+                const amountClass = transaction.amount > 0 ? 'amount-positive' : 'amount-negative';
+                const amountPrefix = transaction.amount > 0 ? '+' : '';
+                const date = new Date(transaction.date).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                return `
+                    <div class="transaction-row">
+                        <div style="display: flex; align-items: center;">
+                            <div class="transaction-icon ${transaction.type}">
+                                ${icon}
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">${transaction.title}</div>
+                                <div class="transaction-meta">${date} • ${transaction.status}</div>
+                            </div>
+                        </div>
+                        <div class="transaction-amount ${amountClass}">
+                            ${amountPrefix}$${Math.abs(transaction.amount).toFixed(2)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getTransactionIcon(type) {
+            const icons = {
+                crypto_deposit: '₿',
+                card_funding: '💰',
+                purchase: '🛒',
+                refund: '↩️'
+            };
+            return icons[type] || '💳';
+        }
+        
+        function updateSummaryStats(transactions) {
+            const totalIncome = transactions
+                .filter(t => t.amount > 0)
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const totalSpent = Math.abs(transactions
+                .filter(t => t.amount < 0)
+                .reduce((sum, t) => sum + t.amount, 0));
+                
+            document.getElementById('totalIncome').textContent = `$${totalIncome.toFixed(2)}`;
+            document.getElementById('totalSpent').textContent = `$${totalSpent.toFixed(2)}`;
+            document.getElementById('transactionCount').textContent = transactions.length;
+        }
+
+        function filterTransactions() {
+            const typeFilter = document.getElementById('typeFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+            
+            let filtered = allTransactions;
+            
+            // Filter by type
+            if (typeFilter !== 'all') {
+                filtered = filtered.filter(t => t.type === typeFilter);
+            }
+            
+            // Filter by status
+            if (statusFilter !== 'all') {
+                filtered = filtered.filter(t => t.status === statusFilter);
+            }
+            
+            // Filter by date
+            if (dateFilter !== 'all') {
+                const now = new Date();
+                const filterDate = new Date();
+                
+                switch (dateFilter) {
+                    case 'today':
+                        filterDate.setHours(0, 0, 0, 0);
+                        break;
+                    case 'week':
+                        filterDate.setDate(now.getDate() - 7);
+                        break;
+                    case 'month':
+                        filterDate.setMonth(now.getMonth() - 1);
+                        break;
+                    case '3months':
+                        filterDate.setMonth(now.getMonth() - 3);
+                        break;
+                    case 'year':
+                        filterDate.setFullYear(now.getFullYear() - 1);
+                        break;
+                }
+                
+                filtered = filtered.filter(t => new Date(t.date) >= filterDate);
+            }
+            
+            // Filter by search
+            if (searchFilter) {
+                filtered = filtered.filter(t => 
+                    t.title.toLowerCase().includes(searchFilter) ||
+                    t.type.toLowerCase().includes(searchFilter) ||
+                    t.status.toLowerCase().includes(searchFilter)
+                );
+            }
+            
+            document.getElementById('resultCount').textContent = `${filtered.length} transactions`;
+            updateSummaryStats(filtered);
+            renderTransactions(filtered);
+        }
+        
+        function clearFilters() {
+            document.getElementById('typeFilter').value = 'all';
+            document.getElementById('dateFilter').value = 'all';
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('searchFilter').value = '';
+            filterTransactions();
+        }
+        
+        function exportTransactions() {
+            const typeFilter = document.getElementById('typeFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+            
+            // Get currently filtered transactions
+            let filtered = allTransactions;
+            
+            if (typeFilter !== 'all') filtered = filtered.filter(t => t.type === typeFilter);
+            if (statusFilter !== 'all') filtered = filtered.filter(t => t.status === statusFilter);
+            if (searchFilter) {
+                filtered = filtered.filter(t => 
+                    t.title.toLowerCase().includes(searchFilter) ||
+                    t.type.toLowerCase().includes(searchFilter)
+                );
+            }
+            
+            // Create CSV content
+            const headers = ['Date', 'Type', 'Description', 'Amount', 'Status', 'Transaction ID'];
+            const csvContent = [
+                headers.join(','),
+                ...filtered.map(t => [
+                    new Date(t.date).toLocaleDateString(),
+                    t.type.replace('_', ' '),
+                    `"${t.title}"`,
+                    t.amount,
+                    t.status,
+                    t.id
+                ].join(','))
+            ].join('\n');
+            
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `freeway-transactions-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTransactions();
+            filterTransactions(); // This will render transactions and update stats
+        });
+    </script>
+</body>
+</html>

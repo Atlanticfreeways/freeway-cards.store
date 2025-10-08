@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .error-content {
+            max-width: 500px;
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+        .error-title {
+            font-size: 32px;
+            margin-bottom: 16px;
+            color: var(--dark);
+        }
+        .error-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+        .error-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 768px) {
+            .error-code { font-size: 80px; }
+            .error-title { font-size: 24px; }
+            .error-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-content">
+            <div class="error-code">500</div>
+            <h1 class="error-title">🔧 Server Error</h1>
+            <p class="error-message">
+                Oops! Something went wrong on our end. Our team has been notified and is working to fix this issue.
+            </p>
+            <div class="error-actions">
+                <button class="btn btn-primary" onclick="window.location.reload()">🔄 Try Again</button>
+                <button class="btn btn-secondary" onclick="window.location.href='../dashboard.html'">🏠 Go Home</button>
+                <button class="btn btn-secondary" onclick="window.location.href='../support/contact.html'">📧 Contact Support</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

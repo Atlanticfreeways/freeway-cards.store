@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Funds - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .amount-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .amount-btn {
+            padding: 16px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .amount-btn.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        .payment-methods {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .payment-method.selected {
+            border-color: var(--primary);
+            background: rgba(0,123,255,0.05);
+        }
+        .payment-method input[type="radio"] {
+            margin-right: 12px;
+        }
+        .custom-amount {
+            display: none;
+        }
+        .custom-amount.show {
+            display: block;
+        }
+        .crypto-payment {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .crypto-payment.show {
+            display: block;
+        }
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+        }
+        .crypto-address {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: var(--radius);
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+            margin: 10px 0;
+            border: 1px solid var(--border);
+        }
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        .payment-status {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .payment-status.show {
+            display: block;
+        }
+        .status-pending {
+            color: #ffc107;
+        }
+        .status-confirmed {
+            color: #28a745;
+        }
+        .crypto-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: var(--radius);
+            margin: 15px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="dashboard-nav">
+                <a href="../dashboard/index.html" class="nav-brand">Freeway Cards</a>
+                <div class="nav-links">
+                    <a href="../dashboard/index.html">Dashboard</a>
+                    <a href="index.html">Wallet</a>
+                    <a href="../dashboard/profile.html">Profile</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="max-width: 500px; margin: 0 auto;">
+            <h1>Add Funds to Wallet</h1>
+            
+            <div class="card">
+                <h2>Select Amount</h2>
+                <div class="amount-selector">
+                    <button class="amount-btn" onclick="selectAmount(25)">$25</button>
+                    <button class="amount-btn" onclick="selectAmount(50)">$50</button>
+                    <button class="amount-btn" onclick="selectAmount(100)">$100</button>
+                    <button class="amount-btn" onclick="selectAmount(200)">$200</button>
+                    <button class="amount-btn" onclick="selectAmount(500)">$500</button>
+                    <button class="amount-btn" onclick="showCustomAmount()">Custom</button>
+                </div>
+                
+                <div class="custom-amount" id="customAmount">
+                    <div class="form-group">
+                        <label for="customAmountInput">Enter Amount</label>
+                        <input type="number" id="customAmountInput" min="5" max="5000" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Payment Method</h2>
+                <div class="payment-methods">
+                    <label class="payment-method" onclick="selectPayment('bitcoin')">
+                        <input type="radio" name="payment" value="bitcoin" checked>
+                        <div>
+                            <h4>₿ Bitcoin (BTC)</h4>
+                            <p>Pay with Bitcoin - No fees</p>
+                        </div>
+                    </label>
+                    <label class="payment-method" onclick="selectPayment('usdt')">
+                        <input type="radio" name="payment" value="usdt">
+                        <div>
+                            <h4>₮ Tether (USDT)</h4>
+                            <p>Pay with USDT - No fees</p>
+                        </div>
+                    </label>
+                    <label class="payment-method" onclick="selectPayment('card')">
+                        <input type="radio" name="payment" value="card">
+                        <div>
+                            <h4>💳 Credit/Debit Card</h4>
+                            <p>Visa, Mastercard - 2.9% fee</p>
+                        </div>
+                    </label>
+                    <label class="payment-method" onclick="selectPayment('paypal')">
+                        <input type="radio" name="payment" value="paypal">
+                        <div>
+                            <h4>🅿️ PayPal</h4>
+                            <p>Pay with PayPal - 3.5% fee</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card" id="paymentSummary">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <span>Amount:</span>
+                    <span id="selectedAmount">$0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <span>Processing Fee:</span>
+                    <span id="processingFee">$0.00</span>
+                </div>
+                <hr style="margin: 20px 0;">
+                <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px;">
+                    <span>Total:</span>
+                    <span id="totalAmount">$0.00</span>
+                </div>
+                
+                <button class="btn btn-primary" onclick="proceedToPayment()" style="width: 100%; margin-top: 20px;" disabled id="proceedBtn">
+                    Proceed to Payment
+                </button>
+            </div>
+
+            <!-- Crypto Payment Interface -->
+            <div class="card crypto-payment" id="cryptoPayment">
+                <h2>Send <span id="cryptoType">Bitcoin</span></h2>
+                
+                <div class="crypto-info">
+                    <strong>⚠️ Important:</strong> Send exactly <strong id="cryptoAmount">0.00</strong> <span id="cryptoSymbol">BTC</span> to the address below. Sending a different amount may result in loss of funds.
+                </div>
+                
+                <div class="qr-code" id="qrCode">
+                    <div style="color: #666;">QR Code Loading...</div>
+                </div>
+                
+                <div>
+                    <strong>Payment Address:</strong>
+                    <div class="crypto-address" id="cryptoAddress">
+                        Generating address...
+                    </div>
+                    <button class="copy-btn" onclick="copyAddress()">📋 Copy</button>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <p><strong>Amount to Send:</strong> <span id="exactAmount">0.00</span> <span id="exactSymbol">BTC</span></p>
+                    <p><strong>Network:</strong> <span id="networkInfo">Bitcoin</span></p>
+                </div>
+                
+                <button class="btn btn-secondary" onclick="cancelPayment()" style="width: 100%; margin-bottom: 10px;">
+                    Cancel Payment
+                </button>
+                
+                <button class="btn btn-primary" onclick="checkPayment()" style="width: 100%;">
+                    I've Sent the Payment
+                </button>
+            </div>
+
+            <!-- Payment Status -->
+            <div class="card payment-status" id="paymentStatus">
+                <h2>Payment Status</h2>
+                
+                <div id="statusContent">
+                    <div class="status-pending">
+                        <h3>⏳ Waiting for Payment</h3>
+                        <p>We're monitoring the blockchain for your payment. This usually takes 1-10 minutes.</p>
+                        
+                        <div style="margin: 20px 0;">
+                            <strong>Transaction ID:</strong>
+                            <div class="crypto-address" id="txId">Waiting for transaction...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-secondary" onclick="goBackToWallet()" style="width: 100%; margin-top: 20px;">
+                    Back to Wallet
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedAmountValue = 0;
+        let selectedPaymentMethod = 'bitcoin';
+        let cryptoRates = {
+            bitcoin: 43250.00, // BTC/USD
+            usdt: 1.00 // USDT/USD
+        };
+        let paymentAddress = '';
+        let paymentTimer = null;
+
+        function selectAmount(amount) {
+            selectedAmountValue = amount;
+            document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            document.getElementById('customAmount').classList.remove('show');
+            updateTotal();
+        }
+
+        function showCustomAmount() {
+            document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            document.getElementById('customAmount').classList.add('show');
+            document.getElementById('customAmountInput').addEventListener('input', function() {
+                selectedAmountValue = parseFloat(this.value) || 0;
+                updateTotal();
+            });
+        }
+
+        function selectPayment(method) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-method').forEach(pm => pm.classList.remove('selected'));
+            event.target.closest('.payment-method').classList.add('selected');
+            updateTotal();
+        }
+
+        function updateTotal() {
+            let fee = 0;
+            
+            // Calculate fees based on payment method
+            if (selectedPaymentMethod === 'card') {
+                fee = selectedAmountValue * 0.029; // 2.9%
+            } else if (selectedPaymentMethod === 'paypal') {
+                fee = selectedAmountValue * 0.035; // 3.5%
+            }
+            // Crypto payments have no fees
+            
+            const total = selectedAmountValue + fee;
+            
+            document.getElementById('selectedAmount').textContent = `$${selectedAmountValue.toFixed(2)}`;
+            document.getElementById('processingFee').textContent = fee > 0 ? `$${fee.toFixed(2)}` : 'Free';
+            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+            
+            document.getElementById('proceedBtn').disabled = selectedAmountValue < 5;
+        }
+
+        function proceedToPayment() {
+            if (selectedAmountValue < 5) {
+                alert('Minimum amount is $5.00');
+                return;
+            }
+            
+            if (selectedPaymentMethod === 'bitcoin' || selectedPaymentMethod === 'usdt') {
+                showCryptoPayment();
+            } else {
+                // Traditional payment processing
+                document.getElementById('proceedBtn').classList.add('loading');
+                document.getElementById('proceedBtn').textContent = 'Processing...';
+                
+                setTimeout(() => {
+                    alert(`Successfully added $${selectedAmountValue.toFixed(2)} to your wallet!`);
+                    window.location.href = 'index.html';
+                }, 2000);
+            }
+        }
+        
+        function showCryptoPayment() {
+            document.getElementById('paymentSummary').style.display = 'none';
+            document.getElementById('cryptoPayment').classList.add('show');
+            
+            const isBitcoin = selectedPaymentMethod === 'bitcoin';
+            const cryptoAmount = isBitcoin ? 
+                (selectedAmountValue / cryptoRates.bitcoin).toFixed(8) :
+                selectedAmountValue.toFixed(2);
+            
+            document.getElementById('cryptoType').textContent = isBitcoin ? 'Bitcoin' : 'Tether (USDT)';
+            document.getElementById('cryptoAmount').textContent = cryptoAmount;
+            document.getElementById('cryptoSymbol').textContent = isBitcoin ? 'BTC' : 'USDT';
+            document.getElementById('exactAmount').textContent = cryptoAmount;
+            document.getElementById('exactSymbol').textContent = isBitcoin ? 'BTC' : 'USDT';
+            document.getElementById('networkInfo').textContent = isBitcoin ? 'Bitcoin' : 'Ethereum (ERC-20)';
+            
+            generatePaymentAddress();
+        }
+        
+        function generatePaymentAddress() {
+            // Simulate address generation
+            const addresses = {
+                bitcoin: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+                usdt: '0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6'
+            };
+            
+            paymentAddress = addresses[selectedPaymentMethod];
+            document.getElementById('cryptoAddress').textContent = paymentAddress;
+            
+            // Generate QR code (simplified)
+            generateQRCode(paymentAddress);
+        }
+        
+        function generateQRCode(address) {
+            // Simplified QR code generation (in real app, use QR library)
+            const qrElement = document.getElementById('qrCode');
+            qrElement.innerHTML = `
+                <div style="width: 180px; height: 180px; background: white; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 12px; text-align: center; padding: 10px;">
+                    <div>
+                        <div style="font-weight: bold; margin-bottom: 5px;">QR Code</div>
+                        <div style="font-family: monospace; word-break: break-all;">${address.substring(0, 20)}...</div>
+                        <div style="margin-top: 5px; font-size: 10px; color: #666;">Scan with crypto wallet</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function copyAddress() {
+            navigator.clipboard.writeText(paymentAddress).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+        
+        function cancelPayment() {
+            document.getElementById('cryptoPayment').classList.remove('show');
+            document.getElementById('paymentSummary').style.display = 'block';
+        }
+        
+        function checkPayment() {
+            document.getElementById('cryptoPayment').classList.remove('show');
+            document.getElementById('paymentStatus').classList.add('show');
+            
+            // Simulate payment monitoring
+            let attempts = 0;
+            paymentTimer = setInterval(() => {
+                attempts++;
+                
+                if (attempts === 3) {
+                    // Simulate payment confirmation
+                    document.getElementById('statusContent').innerHTML = `
+                        <div class="status-confirmed">
+                            <h3>✅ Payment Confirmed!</h3>
+                            <p>Your payment has been confirmed and $${selectedAmountValue.toFixed(2)} has been added to your wallet.</p>
+                            
+                            <div style="margin: 20px 0;">
+                                <strong>Transaction ID:</strong>
+                                <div class="crypto-address">0x1234...abcd</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    clearInterval(paymentTimer);
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                }
+            }, 5000);
+        }
+        
+        function goBackToWallet() {
+            if (paymentTimer) {
+                clearInterval(paymentTimer);
+            }
+            window.location.href = 'index.html';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Initialize
+        document.querySelector('.payment-method').classList.add('selected');
+        
+        // Update crypto rates (in real app, fetch from API)
+        function updateCryptoRates() {
+            // Simulate API call
+            fetch('/api/crypto-rates')
+                .then(response => response.json())
+                .then(data => {
+                    cryptoRates = data;
+                })
+                .catch(() => {
+                    // Use default rates if API fails
+                    console.log('Using default crypto rates');
+                });
+        }
+        
+        // Update rates on page load
+        updateCryptoRates();
+    </script>
+</body>
+</html>

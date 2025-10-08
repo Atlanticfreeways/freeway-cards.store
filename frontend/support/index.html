@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .search-box {
+            max-width: 600px;
+            margin: 30px auto 0;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .category-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        .category-card:hover {
+            transform: translateY(-4px);
+        }
+        .category-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .faq-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+        }
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        .faq-question {
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-answer {
+            margin-top: 12px;
+            color: #666;
+            display: none;
+        }
+        .faq-answer.show {
+            display: block;
+        }
+        .contact-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .contact-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="dashboard-nav">
+                <a href="../dashboard.html" class="nav-brand">Freeway Cards</a>
+                <div class="nav-links">
+                    <a href="../dashboard.html">Dashboard</a>
+                    <a href="../wallet/index.html">Wallet</a>
+                    <a href="../dashboard/profile.html">Profile</a>
+                    <a href="index.html">Support</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-section">
+        <h1>🆘 How can we help you?</h1>
+        <p>Find answers to your questions or get in touch with our support team</p>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search for help articles..." onkeyup="searchFAQ()">
+            <button class="search-btn" onclick="searchFAQ()">🔍</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Help Categories -->
+        <div class="categories-grid">
+            <div class="category-card" onclick="showCategory('getting-started')">
+                <div class="category-icon">🚀</div>
+                <h3>Getting Started</h3>
+                <p>Learn the basics of using Freeway Cards</p>
+            </div>
+            <div class="category-card" onclick="showCategory('cards')">
+                <div class="category-icon">💳</div>
+                <h3>Virtual Cards</h3>
+                <p>Creating and managing your virtual cards</p>
+            </div>
+            <div class="category-card" onclick="showCategory('wallet')">
+                <div class="category-icon">💰</div>
+                <h3>Wallet & Funding</h3>
+                <p>Adding funds and managing your wallet</p>
+            </div>
+            <div class="category-card" onclick="showCategory('security')">
+                <div class="category-icon">🔒</div>
+                <h3>Security & Privacy</h3>
+                <p>Keeping your account safe and secure</p>
+            </div>
+            <div class="category-card" onclick="showCategory('billing')">
+                <div class="category-icon">📊</div>
+                <h3>Billing & Fees</h3>
+                <p>Understanding charges and pricing</p>
+            </div>
+            <div class="category-card" onclick="showCategory('troubleshooting')">
+                <div class="category-icon">🔧</div>
+                <h3>Troubleshooting</h3>
+                <p>Solving common issues and problems</p>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2>📋 Frequently Asked Questions</h2>
+            <div id="faqContainer">
+                <div class="faq-item" data-category="getting-started">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        How do I create my first virtual card?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        To create your first virtual card: 1) Go to your dashboard, 2) Click "Create Card", 3) Choose Visa or Mastercard, 4) Select Instant ($2.99) or Monthly ($4.99), 5) Set your spending limits, 6) Click "Create Card". Your card will be ready instantly!
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="wallet">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        How do I add funds to my wallet?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        You can add funds using Bitcoin (BTC) or Tether (USDT) with no fees, or use credit/debit cards (2.9% fee) or PayPal (3.5% fee). Go to Wallet → Add Funds, select your payment method, and follow the instructions.
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="cards">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        What's the difference between Instant and Monthly cards?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Instant cards cost $2.99 one-time and are perfect for single purchases. Monthly cards cost $4.99/month and can be used multiple times, making them ideal for recurring expenses or frequent shopping.
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="security">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        How secure are virtual cards?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Virtual cards are extremely secure. Each card has unique numbers separate from your main account, spending limits you control, and can be frozen instantly. They protect your real payment information from merchants.
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="billing">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        Are there any hidden fees?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        No hidden fees! We charge only: Card creation fees ($2.99 Instant, $4.99/month Monthly), and payment processing fees (2.9% cards, 3.5% PayPal). Crypto funding is completely free.
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="troubleshooting">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        My card was declined, what should I do?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Check: 1) Sufficient card balance, 2) Daily/monthly limits not exceeded, 3) Card is not frozen, 4) Merchant is not blocked in settings. If issues persist, contact support.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Options -->
+        <div class="faq-section">
+            <h2>💬 Still need help?</h2>
+            <div class="contact-options">
+                <div class="contact-card">
+                    <div style="font-size: 32px; margin-bottom: 16px;">📧</div>
+                    <h3>Email Support</h3>
+                    <p>Get help via email within 24 hours</p>
+                    <button class="btn btn-primary" onclick="openContactForm()">Send Email</button>
+                </div>
+                <div class="contact-card">
+                    <div style="font-size: 32px; margin-bottom: 16px;">💬</div>
+                    <h3>Live Chat</h3>
+                    <p>Chat with our support team instantly</p>
+                    <button class="btn btn-primary" onclick="openLiveChat()">Start Chat</button>
+                </div>
+                <div class="contact-card">
+                    <div style="font-size: 32px; margin-bottom: 16px;">📚</div>
+                    <h3>Knowledge Base</h3>
+                    <p>Browse detailed guides and tutorials</p>
+                    <button class="btn btn-secondary" onclick="openKnowledgeBase()">Browse Articles</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('span');
+            
+            if (answer.classList.contains('show')) {
+                answer.classList.remove('show');
+                icon.textContent = '+';
+            } else {
+                // Close all other FAQs
+                document.querySelectorAll('.faq-answer.show').forEach(item => {
+                    item.classList.remove('show');
+                    item.previousElementSibling.querySelector('span').textContent = '+';
+                });
+                
+                answer.classList.add('show');
+                icon.textContent = '−';
+            }
+        }
+
+        function searchFAQ() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = searchTerm ? 'none' : 'block';
+                }
+            });
+        }
+
+        function showCategory(category) {
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                if (item.dataset.category === category) {
+                    item.style.display = 'block';
+                    item.style.background = '#f8f9fa';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Scroll to FAQ section
+            document.querySelector('.faq-section').scrollIntoView({ behavior: 'smooth' });
+            
+            // Add reset button
+            if (!document.getElementById('resetFilter')) {
+                const resetBtn = document.createElement('button');
+                resetBtn.id = 'resetFilter';
+                resetBtn.className = 'btn btn-secondary';
+                resetBtn.textContent = '🔄 Show All FAQs';
+                resetBtn.onclick = resetFilter;
+                resetBtn.style.marginBottom = '20px';
+                document.getElementById('faqContainer').parentNode.insertBefore(resetBtn, document.getElementById('faqContainer'));
+            }
+        }
+
+        function resetFilter() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                item.style.display = 'block';
+                item.style.background = '';
+            });
+            
+            const resetBtn = document.getElementById('resetFilter');
+            if (resetBtn) resetBtn.remove();
+            
+            document.getElementById('searchInput').value = '';
+        }
+
+        function openContactForm() {
+            window.location.href = 'contact.html';
+        }
+
+        function openLiveChat() {
+            alert('Live chat will be available soon! For now, please use email support.');
+        }
+
+        function openKnowledgeBase() {
+            alert('Knowledge base coming soon! Current FAQs cover the most common questions.');
+        }
+    </script>
+</body>
+</html>

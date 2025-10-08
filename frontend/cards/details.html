@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Details - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .card-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            letter-spacing: 2px;
+            margin: 20px 0;
+            cursor: pointer;
+            user-select: none;
+        }
+        .card-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .action-btn {
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+        .action-btn.secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid var(--border);
+        }
+        .action-btn.danger {
+            background: #dc3545;
+            color: white;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-frozen {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+        .transaction-info {
+            flex: 1;
+        }
+        .transaction-amount {
+            font-weight: 500;
+        }
+        .transaction-amount.negative {
+            color: #dc3545;
+        }
+        .transaction-amount.positive {
+            color: #28a745;
+        }
+        @media (max-width: 768px) {
+            .card-details {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .card-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="dashboard-nav">
+                <a href="../dashboard.html" class="nav-brand">Freeway Cards</a>
+                <div class="nav-links">
+                    <a href="../dashboard.html">Dashboard</a>
+                    <a href="../wallet/index.html">Wallet</a>
+                    <a href="../dashboard/profile.html">Profile</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1 id="cardTitle">Card Details</h1>
+                <span id="cardStatus" class="status-badge status-active">Active</span>
+            </div>
+            
+            <!-- Card Display -->
+            <div class="card-display" id="cardDisplay">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <div style="font-size: 14px; opacity: 0.8;">FREEWAY CARDS</div>
+                        <div style="font-size: 12px; opacity: 0.6;">VIRTUAL CARD</div>
+                    </div>
+                    <div id="cardBrand" style="font-size: 24px;">💳</div>
+                </div>
+                <div class="card-number" id="cardNumber" onclick="toggleCardNumber()">
+                    •••• •••• •••• ••••
+                </div>
+                <div class="card-details">
+                    <div>
+                        <div style="font-size: 12px; opacity: 0.6;">CARDHOLDER</div>
+                        <div id="cardholderName">JOHN DOE</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; opacity: 0.6;">EXPIRES</div>
+                        <div id="cardExpiry">12/27</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; opacity: 0.6;">CVV</div>
+                        <div id="cardCVV" onclick="toggleCVV()" style="cursor: pointer;">•••</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="card">
+                <h2>Card Actions</h2>
+                <div class="card-actions">
+                    <button class="action-btn primary" onclick="fundCard()">💰 Fund Card</button>
+                    <button class="action-btn secondary" onclick="freezeCard()" id="freezeBtn">❄️ Freeze Card</button>
+                    <button class="action-btn secondary" onclick="openSettings()">⚙️ Settings</button>
+                    <button class="action-btn danger" onclick="deleteCard()">🗑️ Delete Card</button>
+                </div>
+            </div>
+
+            <!-- Card Info -->
+            <div class="card">
+                <h2>Card Information</h2>
+                <div style="display: grid; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Card Type:</span>
+                        <span id="cardType">Instant Visa</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Current Balance:</span>
+                        <span id="cardBalance">$0.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Daily Limit:</span>
+                        <span id="dailyLimit">$500</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Monthly Limit:</span>
+                        <span id="monthlyLimit">$5,000</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Usage Type:</span>
+                        <span id="usageType">Online Only</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Created:</span>
+                        <span id="createdDate">Today</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="card">
+                <h2>Recent Transactions</h2>
+                <div id="transactionsList">
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        No transactions yet
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCard = null;
+        let cardNumberVisible = false;
+        let cvvVisible = false;
+
+        function loadCardDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cardId = urlParams.get('id');
+            
+            if (!cardId) {
+                alert('Card not found');
+                window.location.href = '../dashboard.html';
+                return;
+            }
+
+            const cards = JSON.parse(localStorage.getItem('userCards') || '[]');
+            currentCard = cards.find(card => card.id === cardId);
+            
+            if (!currentCard) {
+                alert('Card not found');
+                window.location.href = '../dashboard.html';
+                return;
+            }
+
+            displayCardDetails();
+        }
+
+        function displayCardDetails() {
+            document.getElementById('cardTitle').textContent = currentCard.cardName || 'Card Details';
+            document.getElementById('cardStatus').textContent = currentCard.status || 'Active';
+            document.getElementById('cardStatus').className = `status-badge status-${currentCard.status || 'active'}`;
+            
+            document.getElementById('cardholderName').textContent = currentCard.cardholderName.toUpperCase();
+            document.getElementById('cardExpiry').textContent = currentCard.expiry;
+            
+            document.getElementById('cardType').textContent = `${currentCard.subscription === 'instant' ? 'Instant' : 'Monthly'} ${currentCard.type === 'visa' ? 'Visa' : 'Mastercard'}`;
+            document.getElementById('cardBalance').textContent = `$${(currentCard.balance || 0).toFixed(2)}`;
+            document.getElementById('dailyLimit').textContent = `$${currentCard.dailyLimit}`;
+            document.getElementById('monthlyLimit').textContent = `$${currentCard.monthlyLimit}`;
+            document.getElementById('usageType').textContent = currentCard.onlineOnly ? 'Online Only' : 'Online & In-Store';
+            
+            const createdDate = new Date(currentCard.created).toLocaleDateString();
+            document.getElementById('createdDate').textContent = createdDate;
+            
+            // Update freeze button
+            const freezeBtn = document.getElementById('freezeBtn');
+            if (currentCard.status === 'frozen') {
+                freezeBtn.textContent = '🔓 Unfreeze Card';
+                freezeBtn.onclick = unfreezeCard;
+            } else {
+                freezeBtn.textContent = '❄️ Freeze Card';
+                freezeBtn.onclick = freezeCard;
+            }
+            
+            loadTransactions();
+        }
+
+        function toggleCardNumber() {
+            const cardNumberEl = document.getElementById('cardNumber');
+            if (cardNumberVisible) {
+                cardNumberEl.textContent = '•••• •••• •••• ••••';
+                cardNumberVisible = false;
+            } else {
+                cardNumberEl.textContent = currentCard.number;
+                cardNumberVisible = true;
+                // Auto-hide after 10 seconds
+                setTimeout(() => {
+                    if (cardNumberVisible) {
+                        cardNumberEl.textContent = '•••• •••• •••• ••••';
+                        cardNumberVisible = false;
+                    }
+                }, 10000);
+            }
+        }
+
+        function toggleCVV() {
+            const cvvEl = document.getElementById('cardCVV');
+            if (cvvVisible) {
+                cvvEl.textContent = '•••';
+                cvvVisible = false;
+            } else {
+                cvvEl.textContent = currentCard.cvv;
+                cvvVisible = true;
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    if (cvvVisible) {
+                        cvvEl.textContent = '•••';
+                        cvvVisible = false;
+                    }
+                }, 5000);
+            }
+        }
+
+        function fundCard() {
+            const amount = prompt('Enter amount to fund card:');
+            if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+                currentCard.balance = (currentCard.balance || 0) + parseFloat(amount);
+                updateCard();
+                document.getElementById('cardBalance').textContent = `$${currentCard.balance.toFixed(2)}`;
+                alert(`Successfully funded card with $${parseFloat(amount).toFixed(2)}`);
+            }
+        }
+
+        function freezeCard() {
+            if (confirm('Are you sure you want to freeze this card? It will stop all transactions.')) {
+                currentCard.status = 'frozen';
+                updateCard();
+                displayCardDetails();
+                alert('Card has been frozen');
+            }
+        }
+
+        function unfreezeCard() {
+            if (confirm('Are you sure you want to unfreeze this card?')) {
+                currentCard.status = 'active';
+                updateCard();
+                displayCardDetails();
+                alert('Card has been unfrozen');
+            }
+        }
+
+        function openSettings() {
+            window.location.href = `settings.html?id=${currentCard.id}`;
+        }
+
+        function deleteCard() {
+            if (confirm('Are you sure you want to delete this card? This action cannot be undone.')) {
+                const cards = JSON.parse(localStorage.getItem('userCards') || '[]');
+                const updatedCards = cards.filter(card => card.id !== currentCard.id);
+                localStorage.setItem('userCards', JSON.stringify(updatedCards));
+                alert('Card has been deleted');
+                window.location.href = '../dashboard.html';
+            }
+        }
+
+        function updateCard() {
+            const cards = JSON.parse(localStorage.getItem('userCards') || '[]');
+            const cardIndex = cards.findIndex(card => card.id === currentCard.id);
+            if (cardIndex !== -1) {
+                cards[cardIndex] = currentCard;
+                localStorage.setItem('userCards', JSON.stringify(cards));
+            }
+        }
+
+        function loadTransactions() {
+            // Demo transactions
+            const transactions = [
+                {
+                    id: 'tx1',
+                    merchant: 'Amazon',
+                    amount: -29.99,
+                    date: new Date(Date.now() - 86400000).toISOString(),
+                    status: 'completed'
+                },
+                {
+                    id: 'tx2',
+                    merchant: 'Wallet Fund',
+                    amount: 100.00,
+                    date: new Date(Date.now() - 172800000).toISOString(),
+                    status: 'completed'
+                }
+            ];
+
+            const transactionsList = document.getElementById('transactionsList');
+            if (transactions.length === 0) {
+                transactionsList.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">No transactions yet</div>';
+                return;
+            }
+
+            transactionsList.innerHTML = transactions.map(tx => `
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <div style="font-weight: 500;">${tx.merchant}</div>
+                        <div style="font-size: 14px; color: #666;">${new Date(tx.date).toLocaleDateString()}</div>
+                    </div>
+                    <div class="transaction-amount ${tx.amount < 0 ? 'negative' : 'positive'}">
+                        ${tx.amount < 0 ? '-' : '+'}$${Math.abs(tx.amount).toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Initialize
+        loadCardDetails();
+    </script>
+</body>
+</html>

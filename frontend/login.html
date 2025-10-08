@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Freeway Cards</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .auth-header h1 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        .google-btn {
+            width: 100%;
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 48px;
+        }
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #ddd;
+        }
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <main class="auth-container">
+        <div class="card">
+            <div class="auth-header">
+                <h1>🔑 Sign In</h1>
+                <p>Welcome back to Freeway Cards</p>
+            </div>
+
+            <!-- Google OAuth Button -->
+            <button class="google-btn" onclick="signInWithGoogle()">
+                <span>🔍</span>
+                Continue with Google
+            </button>
+
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <!-- Email/Password Form -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">📧 Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password">🔒 Password:</label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="error-message"></div>
+                </div>
+                <button type="submit" class="btn btn-primary">🚀 Sign In</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <p><a href="auth/forgot-password.html">🤔 Forgot Password?</a></p>
+                <p>Don't have an account? <a href="auth/signup.html">📝 Sign Up</a></p>
+                <p><a href="index.html">🏠 Back to Home</a></p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/validation.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Google OAuth Integration
+        function signInWithGoogle() {
+            alert('🔄 Google OAuth integration coming soon!');
+        }
+
+        // Form validation with API integration
+        const loginForm = new FormValidator(document.getElementById('loginForm'));
+        loginForm
+            .addRule('email', [ValidationRules.required(), ValidationRules.email()])
+            .addRule('password', [ValidationRules.required()]);
+
+        loginForm.onSubmit = async function(formData) {
+            const submitBtn = document.querySelector('#loginForm button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '🔄 Signing in...';
+            
+            try {
+                await api.login(formData);
+                localStorage.setItem('userEmail', formData.email);
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                alert('❌ Login failed: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Sign In';
+            }
+        };
+    </script>
+</body>
+</html>
