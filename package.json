@@ -2,10 +2,13 @@
   "name": "freeway-cards-store",
   "version": "1.0.0",
   "description": "Freeway Cards Store - Digital Gift Card Platform",
-  "main": "frontend/index.html",
+  "main": "backend/server.js",
   "scripts": {
-    "build": "echo 'Static site - no build needed'",
-    "start": "echo 'Static site deployment'"
+    "build": "cd backend && npm install",
+    "start": "cd backend && node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",
