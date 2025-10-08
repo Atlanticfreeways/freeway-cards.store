@@ -3,7 +3,7 @@ services:
     name: freeway-cards-backend
     env: node
     buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    startCommand: cd backend && node server.js
     envVars:
       - key: NODE_ENV
         value: production
@@ -22,12 +22,3 @@ services:
       - key: FROM_EMAIL
         value: noreply@freewaycards-store.netlify.app
 
-  - type: static
-    name: freeway-cards-frontend
-    buildCommand: echo "Static site deployment"
-    staticPublishPath: ./frontend
-    envVars:
-      - key: GOOGLE_CLIENT_ID_PROD
-        value: YOUR_GOOGLE_CLIENT_ID
-      - key: API_BASE_URL_PROD
-        value: https://freeway-cards-backend.onrender.com/api
