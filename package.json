@@ -1,54 +1,15 @@
 {
-  "name": "cardsfreeways-backend",
+  "name": "freeway-cards-store",
   "version": "1.0.0",
-  "description": "Backend API for CardsFreeways virtual card platform",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "build": "npm install",
-    "dev": "nodemon server.js",
-    "test": "NODE_ENV=test jest --detectOpenHandles --forceExit",
-    "test:security": "jest tests/security/ --detectOpenHandles --forceExit",
-    "test:performance": "jest tests/performance.test.js --detectOpenHandles --forceExit",
-    "test:integration": "jest tests/integration.test.js --detectOpenHandles --forceExit",
-    "test:all": "npm run test && npm run test:security && npm run test:performance && npm run test:integration",
-    "audit:security": "node scripts/securityAudit.js",
-    "audit:deps": "npm audit --audit-level high",
-    "load:test": "artillery run load-test.yml",
-    "monitor": "node --inspect server.js",
-    "profile": "node --prof server.js",
-    "audit:final": "node scripts/finalAudit.js",
-    "production:ready": "npm run test:all && npm run audit:final"
+    "start": "node index.js"
   },
   "dependencies": {
-    "@sendgrid/mail": "^7.7.0",
-    "axios": "^1.5.0",
-    "bcryptjs": "^2.4.3",
-    "compression": "^1.7.0",
-    "cors": "^2.8.5",
-    "crypto": "^1.0.1",
-    "csurf": "^1.11.0",
-    "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "express-rate-limit": "^6.0.0",
-    "express-validator": "^7.2.1",
-    "google-auth-library": "^9.0.0",
-    "helmet": "^7.1.0",
-    "isomorphic-dompurify": "^1.0.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^7.5.0",
-    "nodemailer": "^6.9.4",
-    "validator": "^13.0.0",
-    "winston": "^3.0.0",
-    "response-time": "^2.3.2"
+    "cors": "^2.8.5"
   },
-  "devDependencies": {
-    "artillery": "^2.0.8",
-    "jest": "^29.7.0",
-    "nodemon": "^3.0.1",
-    "supertest": "^6.3.3",
-    "clinic": "^12.0.0",
-    "autocannon": "^7.12.0",
-    "@types/jest": "^29.5.5"
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
