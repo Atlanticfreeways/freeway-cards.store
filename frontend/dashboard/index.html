@@ -148,12 +148,22 @@
         }
         
         // Load PWA scripts
-        const scripts = ['../js/pwa.js', '../js/themes.js', '../js/notifications.js', '../js/performance.js'];
+        const scripts = ['../js/pwa.js', '../js/themes.js', '../js/notifications.js', '../js/security.js', '../js/analytics.js'];
         scripts.forEach(src => {
             const script = document.createElement('script');
             script.src = src;
             document.head.appendChild(script);
         });
+        
+        // Track dashboard view
+        setTimeout(() => {
+            if (window.analytics) {
+                analytics.trackEvent('dashboard_view', {
+                    walletBalance: document.getElementById('walletBalance').textContent,
+                    totalCards: document.getElementById('totalCards').textContent
+                });
+            }
+        }, 1000);
     </script>
 </body>
 </html>

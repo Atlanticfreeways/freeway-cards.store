@@ -1,161 +1,202 @@
-// Production Security Enhancements
+// Security Manager
 class SecurityManager {
-    constructor() {
-        this.initializeSecurityHeaders();
-        this.setupCSRFProtection();
-        this.initializeContentSecurityPolicy();
-        this.setupSecureStorage();
-    }
+  constructor() {
+    this.sessionTimeout = 30 * 60 * 1000; // 30 minutes
+    this.warningTime = 5 * 60 * 1000; // 5 minutes before timeout
+    this.init();
+  }
 
-    initializeSecurityHeaders() {
-        // Add security meta tags if not present
-        this.addMetaTag('X-Content-Type-Options', 'nosniff');
-        this.addMetaTag('X-Frame-Options', 'DENY');
-        this.addMetaTag('X-XSS-Protection', '1; mode=block');
-        this.addMetaTag('Referrer-Policy', 'strict-origin-when-cross-origin');
-    }
+  init() {
+    this.setupSessionManagement();
+    this.setupCSRFProtection();
+    this.setupInputSanitization();
+    this.setupSecurityHeaders();
+  }
 
-    addMetaTag(name, content) {
-        if (!document.querySelector(`meta[http-equiv="${name}"]`)) {
-            const meta = document.createElement('meta');
-            meta.httpEquiv = name;
-            meta.content = content;
-            document.head.appendChild(meta);
+  setupSessionManagement() {
+    let lastActivity = Date.now();
+    let warningShown = false;
+
+    // Track user activity
+    const activities = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    activities.forEach(event => {
+      document.addEventListener(event, () => {
+        lastActivity = Date.now();
+        warningShown = false;
+      }, true);
+    });
+
+    // Check session timeout
+    setInterval(() => {
+      const timeSinceActivity = Date.now() - lastActivity;
+      
+      if (timeSinceActivity > this.sessionTimeout) {
+        this.handleSessionTimeout();
+      } else if (timeSinceActivity > (this.sessionTimeout - this.warningTime) && !warningShown) {
+        this.showSessionWarning();
+        warningShown = true;
+      }
+    }, 60000); // Check every minute
+  }
+
+  handleSessionTimeout() {
+    localStorage.clear();
+    sessionStorage.clear();
+    notifications.warning('Session expired. Please log in again.');
+    setTimeout(() => {
+      window.location.href = '/index.html';
+    }, 2000);
+  }
+
+  showSessionWarning() {
+    const extend = confirm('Your session will expire in 5 minutes. Do you want to extend it?');
+    if (extend) {
+      // Simulate session extension
+      notifications.success('Session extended successfully');
+    }
+  }
+
+  setupCSRFProtection() {
+    // Generate CSRF token
+    const csrfToken = this.generateToken();
+    sessionStorage.setItem('csrfToken', csrfToken);
+
+    // Add CSRF token to all forms
+    document.addEventListener('submit', (e) => {
+      const form = e.target;
+      if (form.tagName === 'FORM') {
+        let csrfInput = form.querySelector('input[name="csrf_token"]');
+        if (!csrfInput) {
+          csrfInput = document.createElement('input');
+          csrfInput.type = 'hidden';
+          csrfInput.name = 'csrf_token';
+          csrfInput.value = csrfToken;
+          form.appendChild(csrfInput);
         }
+      }
+    });
+  }
+
+  setupInputSanitization() {
+    // Sanitize inputs on blur
+    document.addEventListener('blur', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        e.target.value = this.sanitizeInput(e.target.value);
+      }
+    }, true);
+  }
+
+  sanitizeInput(input) {
+    // Basic XSS prevention
+    return input
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g, '&#x2F;');
+  }
+
+  generateToken() {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  setupSecurityHeaders() {
+    // Content Security Policy
+    const meta = document.createElement('meta');
+    meta.httpEquiv = 'Content-Security-Policy';
+    meta.content = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';";
+    document.head.appendChild(meta);
+  }
+
+  // Rate limiting for API calls
+  createRateLimiter(maxRequests = 10, timeWindow = 60000) {
+    const requests = [];
+    
+    return function() {
+      const now = Date.now();
+      
+      // Remove old requests outside time window
+      while (requests.length > 0 && requests[0] < now - timeWindow) {
+        requests.shift();
+      }
+      
+      if (requests.length >= maxRequests) {
+        notifications.error('Too many requests. Please wait before trying again.');
+        return false;
+      }
+      
+      requests.push(now);
+      return true;
+    };
+  }
+
+  // Secure form submission
+  secureSubmit(form, callback) {
+    const rateLimiter = this.createRateLimiter(5, 60000);
+    
+    if (!rateLimiter()) {
+      return false;
     }
 
-    setupCSRFProtection() {
-        // Generate CSRF token for forms
-        this.csrfToken = this.generateToken();
-        
-        // Add CSRF token to all API requests
-        const originalFetch = window.fetch;
-        window.fetch = (url, options = {}) => {
-            if (url.includes('/api/') && options.method !== 'GET') {
-                options.headers = {
-                    ...options.headers,
-                    'X-CSRF-Token': this.csrfToken
-                };
-            }
-            return originalFetch(url, options);
-        };
+    // Validate CSRF token
+    const csrfToken = form.querySelector('input[name="csrf_token"]')?.value;
+    const sessionToken = sessionStorage.getItem('csrfToken');
+    
+    if (csrfToken !== sessionToken) {
+      notifications.error('Security validation failed. Please refresh and try again.');
+      return false;
     }
 
-    initializeContentSecurityPolicy() {
-        // Add CSP meta tag for additional security
-        const csp = [
-            "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.googletagmanager.com",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-            "font-src 'self' https://fonts.gstatic.com",
-            "img-src 'self' data: https:",
-            "connect-src 'self' https://api.qrserver.com https://*.railway.app https://*.herokuapp.com",
-            "frame-src https://accounts.google.com"
-        ].join('; ');
-        
-        this.addMetaTag('Content-Security-Policy', csp);
-    }
+    // Proceed with callback
+    if (callback) callback();
+    return true;
+  }
 
-    setupSecureStorage() {
-        // Encrypt sensitive data in localStorage
-        const originalSetItem = localStorage.setItem;
-        const originalGetItem = localStorage.getItem;
-        
-        localStorage.setItem = (key, value) => {
-            if (this.isSensitiveKey(key)) {
-                value = this.encrypt(value);
-            }
-            return originalSetItem.call(localStorage, key, value);
-        };
-        
-        localStorage.getItem = (key) => {
-            let value = originalGetItem.call(localStorage, key);
-            if (value && this.isSensitiveKey(key)) {
-                value = this.decrypt(value);
-            }
-            return value;
-        };
-    }
+  // Password strength checker
+  checkPasswordStrength(password) {
+    let score = 0;
+    const checks = {
+      length: password.length >= 8,
+      lowercase: /[a-z]/.test(password),
+      uppercase: /[A-Z]/.test(password),
+      numbers: /\d/.test(password),
+      symbols: /[^A-Za-z0-9]/.test(password)
+    };
 
-    isSensitiveKey(key) {
-        const sensitiveKeys = ['authToken', 'userProfile', 'paymentInfo'];
-        return sensitiveKeys.some(k => key.includes(k));
-    }
+    Object.values(checks).forEach(check => {
+      if (check) score++;
+    });
 
-    encrypt(data) {
-        // Simple encryption for demo (use proper encryption in production)
-        try {
-            return btoa(encodeURIComponent(data));
-        } catch (e) {
-            return data;
-        }
-    }
+    const strength = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'][score] || 'Very Weak';
+    const color = ['#dc3545', '#fd7e14', '#ffc107', '#20c997', '#28a745'][score] || '#dc3545';
 
-    decrypt(data) {
-        try {
-            return decodeURIComponent(atob(data));
-        } catch (e) {
-            return data;
-        }
-    }
+    return { score, strength, color, checks };
+  }
 
-    generateToken() {
-        return Array.from(crypto.getRandomValues(new Uint8Array(32)))
-            .map(b => b.toString(16).padStart(2, '0'))
-            .join('');
-    }
+  // Detect suspicious activity
+  detectSuspiciousActivity() {
+    const suspiciousPatterns = [
+      /script/i,
+      /javascript:/i,
+      /vbscript:/i,
+      /onload/i,
+      /onerror/i
+    ];
 
-    sanitizeInput(input) {
-        const div = document.createElement('div');
-        div.textContent = input;
-        return div.innerHTML;
-    }
-
-    validateEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    validatePassword(password) {
-        // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
-        return passwordRegex.test(password);
-    }
-
-    checkPasswordStrength(password) {
-        let score = 0;
-        let feedback = [];
-
-        if (password.length >= 8) score++;
-        else feedback.push('At least 8 characters');
-
-        if (/[a-z]/.test(password)) score++;
-        else feedback.push('Lowercase letter');
-
-        if (/[A-Z]/.test(password)) score++;
-        else feedback.push('Uppercase letter');
-
-        if (/\d/.test(password)) score++;
-        else feedback.push('Number');
-
-        if (/[@$!%*?&]/.test(password)) score++;
-        else feedback.push('Special character');
-
-        const strength = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'][score];
-        
-        return {
-            score,
-            strength,
-            feedback: feedback.length > 0 ? 'Missing: ' + feedback.join(', ') : 'Strong password!'
-        };
-    }
+    document.addEventListener('input', (e) => {
+      const value = e.target.value;
+      const isSuspicious = suspiciousPatterns.some(pattern => pattern.test(value));
+      
+      if (isSuspicious) {
+        console.warn('Suspicious input detected');
+        e.target.value = this.sanitizeInput(value);
+        notifications.warning('Potentially harmful input was sanitized');
+      }
+    });
+  }
 }
 
 // Initialize security manager
-window.security = new SecurityManager();
-
-// Export security functions
-window.sanitizeInput = (input) => window.security.sanitizeInput(input);
-window.validateEmail = (email) => window.security.validateEmail(email);
-window.validatePassword = (password) => window.security.validatePassword(password);
-window.checkPasswordStrength = (password) => window.security.checkPasswordStrength(password);
+const security = new SecurityManager();

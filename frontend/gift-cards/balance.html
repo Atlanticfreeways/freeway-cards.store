@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Gift Card Balance - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/accessibility.css">
+    <link rel="stylesheet" href="../css/themes.css">
+    <style>
+        .balance-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .balance-result {
+            background: linear-gradient(135deg, var(--success), #20c997);
+            color: white;
+            padding: 32px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+        .balance-amount {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 16px 0;
+        }
+        .card-info {
+            background: var(--light);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="dashboard-nav">
+                <a href="../dashboard/index.html" class="nav-brand">Freeway Cards</a>
+                <div class="nav-links">
+                    <a href="../dashboard/index.html">Dashboard</a>
+                    <a href="../wallet/index.html">Wallet</a>
+                    <a href="../dashboard/profile.html">Profile</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="balance-container">
+            <h1>Check Gift Card Balance</h1>
+            
+            <div class="card">
+                <form id="balanceForm">
+                    <div class="form-group">
+                        <label for="cardCode" class="required">Gift Card Code</label>
+                        <input type="text" id="cardCode" class="code-input" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" required>
+                        <div class="error-message"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Check Balance
+                    </button>
+                </form>
+            </div>
+
+            <div class="balance-result" id="balanceResult">
+                <h2>🎁 Gift Card Balance</h2>
+                <div class="balance-amount" id="balanceAmount">$25.00</div>
+                <p id="cardType">Amazon Gift Card</p>
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="useCard()" style="background: rgba(255,255,255,0.2); color: white;">
+                        Use This Card
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-info">
+                <h3>How to Use Your Gift Card</h3>
+                <ul style="margin: 16px 0; padding-left: 20px;">
+                    <li>Online: Enter the code at checkout</li>
+                    <li>In-store: Show the code to the cashier</li>
+                    <li>Mobile app: Add to your account wallet</li>
+                </ul>
+                
+                <h3>Need Help?</h3>
+                <p style="font-size: 14px; color: #666;">
+                    If you're having trouble with your gift card, please contact our support team with your order number.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Format gift card code
+        document.getElementById('cardCode').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+            let formatted = value.match(/.{1,4}/g)?.join('-') || value;
+            if (formatted.length > 19) formatted = formatted.substring(0, 19);
+            e.target.value = formatted;
+        });
+
+        document.getElementById('balanceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            checkBalance();
+        });
+
+        function checkBalance() {
+            const code = document.getElementById('cardCode').value;
+            
+            if (code.length < 19) {
+                showError('Please enter a complete gift card code');
+                return;
+            }
+            
+            const btn = document.querySelector('#balanceForm button');
+            btn.classList.add('loading');
+            btn.textContent = 'Checking...';
+            
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                btn.textContent = 'Check Balance';
+                
+                if (code.includes('INVALID')) {
+                    showError('Invalid gift card code');
+                } else {
+                    showBalance();
+                }
+            }, 1500);
+        }
+
+        function showBalance() {
+            document.getElementById('balanceForm').style.display = 'none';
+            document.getElementById('balanceResult').style.display = 'block';
+            
+            // Simulate different card types and balances
+            const cardTypes = ['Amazon', 'Starbucks', 'iTunes', 'Google Play'];
+            const balances = ['$25.00', '$15.50', '$50.00', '$30.75'];
+            
+            const randomType = cardTypes[Math.floor(Math.random() * cardTypes.length)];
+            const randomBalance = balances[Math.floor(Math.random() * balances.length)];
+            
+            document.getElementById('cardType').textContent = `${randomType} Gift Card`;
+            document.getElementById('balanceAmount').textContent = randomBalance;
+        }
+
+        function showError(message) {
+            const errorEl = document.querySelector('.error-message');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+
+        function useCard() {
+            window.location.href = 'redeem.html';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Load scripts
+        const scripts = ['../js/notifications.js'];
+        scripts.forEach(src => {
+            const script = document.createElement('script');
+            script.src = src;
+            document.head.appendChild(script);
+        });
+    </script>
+</body>
+</html>

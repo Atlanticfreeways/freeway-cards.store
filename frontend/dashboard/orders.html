@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - Freeway Cards</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/accessibility.css">
+    <link rel="stylesheet" href="../css/themes.css">
+    <style>
+        .order-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        .order-header {
+            background: var(--light);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-body {
+            padding: 20px;
+        }
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+        .gift-card-preview {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px;
+            background: var(--light);
+            border-radius: var(--radius);
+            margin: 12px 0;
+        }
+        .card-thumbnail {
+            width: 80px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="dashboard-nav">
+                <a href="index.html" class="nav-brand">Freeway Cards</a>
+                <div class="nav-links">
+                    <a href="index.html">Dashboard</a>
+                    <a href="../wallet/index.html">Wallet</a>
+                    <a href="profile.html">Profile</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Order History</h1>
+        
+        <div class="card">
+            <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+                <select id="statusFilter" onchange="filterOrders()">
+                    <option value="all">All Orders</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="failed">Failed</option>
+                </select>
+                <input type="date" id="dateFilter" onchange="filterOrders()">
+            </div>
+        </div>
+
+        <div id="ordersList">
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <strong>Order #FC-2024-001</strong>
+                        <div style="font-size: 14px; color: #666;">January 15, 2024</div>
+                    </div>
+                    <span class="order-status status-completed">Completed</span>
+                </div>
+                <div class="order-body">
+                    <div class="gift-card-preview">
+                        <div class="card-thumbnail">🎁</div>
+                        <div>
+                            <h4>Amazon Gift Card</h4>
+                            <p>$25.00 • For: John Smith</p>
+                            <p style="font-size: 12px; color: #666;">Code: AMZN-****-****-1234</p>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <button class="btn btn-primary" onclick="downloadCard('FC-2024-001')">Download</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 16px; font-size: 14px;">
+                        <span>Total: $25.50 (incl. $0.50 fee)</span>
+                        <a href="#" onclick="viewOrderDetails('FC-2024-001')">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <strong>Order #FC-2024-002</strong>
+                        <div style="font-size: 14px; color: #666;">January 12, 2024</div>
+                    </div>
+                    <span class="order-status status-completed">Completed</span>
+                </div>
+                <div class="order-body">
+                    <div class="gift-card-preview">
+                        <div class="card-thumbnail" style="background: linear-gradient(135deg, #ff9a9e, #fecfef);">🎂</div>
+                        <div>
+                            <h4>Starbucks Gift Card</h4>
+                            <p>$15.00 • For: Sarah Johnson</p>
+                            <p style="font-size: 12px; color: #666;">Code: SBUX-****-****-5678</p>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <button class="btn btn-primary" onclick="downloadCard('FC-2024-002')">Download</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 16px; font-size: 14px;">
+                        <span>Total: $15.30 (incl. $0.30 fee)</span>
+                        <a href="#" onclick="viewOrderDetails('FC-2024-002')">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <strong>Order #FC-2024-003</strong>
+                        <div style="font-size: 14px; color: #666;">January 10, 2024</div>
+                    </div>
+                    <span class="order-status status-pending">Processing</span>
+                </div>
+                <div class="order-body">
+                    <div class="gift-card-preview">
+                        <div class="card-thumbnail" style="background: linear-gradient(135deg, #2c3e50, #34495e);">💼</div>
+                        <div>
+                            <h4>iTunes Gift Card</h4>
+                            <p>$50.00 • For: Mike Wilson</p>
+                            <p style="font-size: 12px; color: #666;">Processing...</p>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <button class="btn" disabled>Processing</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 16px; font-size: 14px;">
+                        <span>Total: $51.00 (incl. $1.00 fee)</span>
+                        <a href="#" onclick="viewOrderDetails('FC-2024-003')">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function filterOrders() {
+            // Filter implementation
+            console.log('Filtering orders...');
+        }
+
+        function downloadCard(orderId) {
+            notifications.success(`Gift card ${orderId} downloaded successfully!`);
+        }
+
+        function viewOrderDetails(orderId) {
+            window.location.href = `order-details.html?id=${orderId}`;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Load PWA scripts
+        const scripts = ['../js/pwa.js', '../js/themes.js', '../js/notifications.js'];
+        scripts.forEach(src => {
+            const script = document.createElement('script');
+            script.src = src;
+            document.head.appendChild(script);
+        });
+    </script>
+</body>
+</html>
