@@ -3,132 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - Freeway Cards</title>
+    <title>Login - Freeway Cards</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="css/accessibility.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <meta name="description" content="Login to Freeway Cards - Digital gift card platform">
     <style>
         .auth-container {
             max-width: 400px;
             margin: 50px auto;
             padding: 20px;
         }
-        .auth-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .auth-header h1 {
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-        .google-btn {
-            width: 100%;
-            background: #4285f4;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 1rem;
-            cursor: pointer;
+        .tabs {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-height: 48px;
+            margin-bottom: 20px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
         }
-        .divider {
-            text-align: center;
-            margin: 1.5rem 0;
-            position: relative;
-        }
-        .divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: #ddd;
-        }
-        .divider span {
+        .tab {
+            flex: 1;
+            padding: 12px;
             background: white;
-            padding: 0 1rem;
-            color: #666;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .language-selector {
+            margin-bottom: 20px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <main class="auth-container">
-        <div class="card">
-            <div class="auth-header">
-                <h1>🔑 Sign In</h1>
-                <p>Welcome back to Freeway Cards</p>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <button id="installBtn" class="btn btn-primary" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000;">Install App</button>
+    <button id="themeToggle" class="btn" style="position: fixed; top: 20px; right: 20px; z-index: 1000; width: 44px; height: 44px;">🔄</button>
+    
+    <main id="main-content" class="auth-container">
+        <div class="card page-enter">
+            <h1 data-i18n="common.app_name">Freeway Cards</h1>
+            
+            <div class="language-selector">
+                <select id="languageSelector" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border);">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                </select>
             </div>
-
-            <!-- Google OAuth Button -->
-            <button class="google-btn" onclick="signInWithGoogle()">
-                <span>🔍</span>
-                Continue with Google
-            </button>
-
-            <div class="divider">
-                <span>or</span>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('login')" data-i18n="auth.login">Login</button>
+                <button class="tab" onclick="showTab('signup')" data-i18n="auth.signup">Sign Up</button>
             </div>
-
-            <!-- Email/Password Form -->
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">📧 Email:</label>
-                    <input type="email" id="email" name="email" required>
-                    <div class="error-message"></div>
-                </div>
-                <div class="form-group">
-                    <label for="password">🔒 Password:</label>
-                    <input type="password" id="password" name="password" required>
-                    <div class="error-message"></div>
-                </div>
-                <button type="submit" class="btn btn-primary">🚀 Sign In</button>
-            </form>
-
-            <div style="text-align: center; margin-top: 1.5rem;">
-                <p><a href="auth/forgot-password.html">🤔 Forgot Password?</a></p>
-                <p>Don't have an account? <a href="auth/signup.html">📝 Sign Up</a></p>
-                <p><a href="index.html">🏠 Back to Home</a></p>
+            
+            <div id="login" class="tab-content active">
+                <h2 data-i18n="auth.login">Login</h2>
+                <form id="loginForm" method="POST" action="/api/auth/login">
+                    <div class="form-group">
+                        <label for="email" data-i18n="auth.email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" data-i18n="auth.password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                        <div class="error-message"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-i18n="auth.login">Login</button>
+                </form>
+                <p style="text-align: center; margin-top: 16px;">
+                    <a href="auth/forgot-password.html" data-i18n="auth.forgot_password">Forgot Password?</a>
+                </p>
+            </div>
+            
+            <div id="signup" class="tab-content">
+                <p style="text-align: center; margin-bottom: 20px;">
+                    <a href="auth/signup.html" class="btn btn-primary" data-i18n="auth.create_account">Create New Account</a>
+                </p>
             </div>
         </div>
     </main>
 
     <script src="js/validation.js"></script>
-    <script src="js/api.js"></script>
+    <script src="js/pwa.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/offline.js"></script>
+    <script src="js/analytics.js"></script>
     <script>
-        // Google OAuth Integration
-        function signInWithGoogle() {
-            alert('🔄 Google OAuth integration coming soon!');
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tab).classList.add('active');
         }
 
-        // Form validation with API integration
-        const loginForm = new FormValidator(document.getElementById('loginForm'));
-        loginForm
-            .addRule('email', [ValidationRules.required(), ValidationRules.email()])
-            .addRule('password', [ValidationRules.required()]);
+        // Initialize login form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = new FormValidator(document.getElementById('loginForm'));
+            loginForm
+                .addRule('email', [ValidationRules.required(), ValidationRules.email()])
+                .addRule('password', [ValidationRules.required()]);
 
-        loginForm.onSubmit = async function(formData) {
-            const submitBtn = document.querySelector('#loginForm button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '🔄 Signing in...';
-            
-            try {
-                await api.login(formData);
-                localStorage.setItem('userEmail', formData.email);
-                localStorage.setItem('isLoggedIn', 'true');
-                window.location.href = 'dashboard.html';
-            } catch (error) {
-                alert('❌ Login failed: ' + error.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '🚀 Sign In';
-            }
-        };
+            loginForm.onSubmit = function() {
+                setTimeout(() => {
+                    this.form.classList.remove('loading');
+                    notifications.success('Login successful!');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard/index.html';
+                    }, 1000);
+                }, 1500);
+            };
+        });
     </script>
 </body>
 </html>
