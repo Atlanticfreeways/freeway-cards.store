@@ -25,7 +25,7 @@ class GoogleOAuth {
                 throw new Error('Invalid Google Client ID configuration');
             }
             
-            console.log('Validating Google Client ID:', this.clientId.substring(0, 20) + '...');
+            console.log('Client ID validation passed:', this.clientId.substring(0, 20) + '...');
             
             // Load Google Identity Services
             await this.loadGoogleScript();
