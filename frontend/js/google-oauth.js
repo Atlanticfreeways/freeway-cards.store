@@ -6,13 +6,25 @@ class GoogleOAuth {
     }
 
     getClientId() {
-        return window.config ? window.config.get('googleClientId') : 'demo-client-id.apps.googleusercontent.com';
+        if (window.config) {
+            const clientId = window.config.get('googleClientId');
+            // Decode any HTML entities
+            const div = document.createElement('div');
+            div.innerHTML = clientId;
+            return div.textContent || div.innerText || clientId;
+        }
+        return '804228968611-lcsqnvmgfabs4s9445d0d3lsikqupet3.apps.googleusercontent.com';
     }
 
     async initialize() {
         if (this.isInitialized) return;
 
         try {
+            // Validate client ID
+            if (!this.clientId || this.clientId.includes('&quot;')) {
+                throw new Error('Invalid Google Client ID configuration');
+            }
+            
             // Load Google Identity Services
             await this.loadGoogleScript();
             
@@ -23,8 +35,13 @@ class GoogleOAuth {
             });
 
             this.isInitialized = true;
+            console.log('Google OAuth initialized with client ID:', this.clientId.substring(0, 20) + '...');
         } catch (error) {
             console.error('Google OAuth initialization failed:', error);
+            // Show user-friendly error
+            if (document.getElementById('google-signin-error')) {
+                document.getElementById('google-signin-error').textContent = 'Google Sign-In temporarily unavailable';
+            }
         }
     }
 
