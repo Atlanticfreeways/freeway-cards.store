@@ -1,58 +1,47 @@
 const express = require('express');
+const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
-const { auth } = require('../middleware/auth');
-const { generatePaymentAddress } = require('../utils/bitnob');
-const csrfProtection = require('../middleware/csrf');
-const { validateWalletFunding, validateWalletWithdrawal } = require('../middleware/validation');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 
 // Get wallet balance
 router.get('/balance', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-    res.json({ success: true, balance: user.walletBalance });
+    const user = await User.findById(req.userId);
+    res.json({ balance: user.walletBalance });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-// Fund wallet with crypto
-router.post('/fund', auth, csrfProtection, validateWalletFunding, async (req, res) => {
+// Add funds to wallet
+router.post('/add-funds', auth, [
+  body('amount').isFloat({ min: 5, max: 10000 }),
+  body('paymentMethod').isIn(['card', 'crypto', 'bank'])
+], async (req, res) => {
   try {
-    const { cryptocurrency, amount } = req.body;
-    
-    const paymentData = await generatePaymentAddress(cryptocurrency.toUpperCase(), amount);
-    
-    res.json({ 
-      success: true, 
-      paymentAddress: paymentData.address,
-      amount: paymentData.amount,
-      currency: cryptocurrency.toUpperCase(),
-      expiresAt: paymentData.expiresAt
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
-// Withdraw from wallet
-router.post('/withdraw', auth, csrfProtection, validateWalletWithdrawal, async (req, res) => {
-  try {
-    const { amount, bankAccount } = req.body;
-    const user = await User.findById(req.user.id);
-    
-    if (user.walletBalance < amount) {
-      return res.status(400).json({ success: false, message: 'Insufficient balance' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    // Process withdrawal (integrate with payment processor)
-    user.walletBalance -= amount;
+    const { amount, paymentMethod } = req.body;
+
+    // Simulate payment processing
+    const user = await User.findById(req.userId);
+    user.walletBalance += amount;
     await user.save();
 
-    res.json({ success: true, message: 'Withdrawal processed successfully' });
+    res.json({
+      success: true,
+      amount,
+      newBalance: user.walletBalance,
+      paymentMethod,
+      transactionId: `tx_${Date.now()}`
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
