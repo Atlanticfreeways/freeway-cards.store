@@ -86,6 +86,15 @@
                     </div>
                     <button type="submit" class="btn btn-primary" data-i18n="auth.login">Login</button>
                 </form>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <div style="border-top: 1px solid var(--border); margin: 20px 0; position: relative;">
+                        <span style="background: white; padding: 0 10px; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); color: #666;">or</span>
+                    </div>
+                    <div id="google-signin-btn" style="margin: 10px 0;"></div>
+                    <div id="google-signin-error" style="color: var(--danger); font-size: 14px; margin-top: 10px;"></div>
+                </div>
+                
                 <p style="text-align: center; margin-top: 16px;">
                     <a href="auth/forgot-password.html" data-i18n="auth.forgot_password">Forgot Password?</a>
                 </p>
@@ -99,7 +108,9 @@
         </div>
     </main>
 
+    <script src="js/config.js"></script>
     <script src="js/validation.js"></script>
+    <script src="js/google-oauth.js"></script>
     <script src="js/pwa.js"></script>
     <script src="js/themes.js"></script>
     <script src="js/notifications.js"></script>
@@ -115,7 +126,7 @@
             document.getElementById(tab).classList.add('active');
         }
 
-        // Initialize login form validation
+        // Initialize login form validation and Google OAuth
         document.addEventListener('DOMContentLoaded', function() {
             const loginForm = new FormValidator(document.getElementById('loginForm'));
             loginForm
@@ -131,6 +142,13 @@
                     }, 1000);
                 }, 1500);
             };
+            
+            // Initialize Google OAuth button
+            setTimeout(() => {
+                if (window.googleOAuth && window.googleOAuth.isInitialized) {
+                    googleOAuth.renderSignInButton('google-signin-btn');
+                }
+            }, 1000);
         });
     </script>
 </body>

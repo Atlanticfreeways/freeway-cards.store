@@ -187,6 +187,33 @@
             </div>
 
             <div class="card">
+                <h2>💳 Payment Method</h2>
+                <div class="payment-options" style="display: grid; gap: 12px; margin-bottom: 20px;">
+                    <div class="payment-option selected" onclick="selectPayment('wallet')" style="padding: 16px; border: 2px solid var(--primary); border-radius: var(--radius); cursor: pointer; background: rgba(0,123,255,0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>💰 Wallet Balance</strong>
+                                <div style="font-size: 14px; color: #666; margin-top: 4px;">Use your current wallet balance</div>
+                            </div>
+                            <span style="color: var(--success); font-weight: bold;">$125.50</span>
+                        </div>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('card')" style="padding: 16px; border: 2px solid var(--border); border-radius: var(--radius); cursor: pointer;">
+                        <div>
+                            <strong>💳 Credit/Debit Card</strong>
+                            <div style="font-size: 14px; color: #666; margin-top: 4px;">Pay with Visa, Mastercard, or American Express</div>
+                        </div>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('crypto')" style="padding: 16px; border: 2px solid var(--border); border-radius: var(--radius); cursor: pointer;">
+                        <div>
+                            <strong>₿ Cryptocurrency</strong>
+                            <div style="font-size: 14px; color: #666; margin-top: 4px;">Pay with Bitcoin, Ethereum, or other crypto</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
                 <h2>Order Summary</h2>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
                     <span>Gift Card Amount:</span>
@@ -220,6 +247,7 @@
         let selectedDesign = 'general';
         let selectedAmount = 0;
         let selectedDelivery = 'instant';
+        let selectedPayment = 'wallet';
         let walletBalance = 0;
         
         // Load wallet balance
@@ -283,6 +311,18 @@
             } else {
                 scheduledDate.style.display = 'none';
             }
+        }
+        
+        function selectPayment(method) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.style.borderColor = 'var(--border)';
+                opt.style.background = 'white';
+            });
+            event.target.closest('.payment-option').style.borderColor = 'var(--primary)';
+            event.target.closest('.payment-option').style.background = 'rgba(0,123,255,0.05)';
+            
+            updateSummary();
         }
         
         function purchaseCard() {

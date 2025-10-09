@@ -21,9 +21,11 @@ class GoogleOAuth {
 
         try {
             // Validate client ID
-            if (!this.clientId || this.clientId.includes('&quot;')) {
+            if (!this.clientId || this.clientId.includes('&quot;') || this.clientId.length < 20) {
                 throw new Error('Invalid Google Client ID configuration');
             }
+            
+            console.log('Validating Google Client ID:', this.clientId.substring(0, 20) + '...');
             
             // Load Google Identity Services
             await this.loadGoogleScript();

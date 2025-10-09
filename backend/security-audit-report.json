@@ -1,0 +1,11 @@
+{
+  "vulnerabilities": [],
+  "warnings": [],
+  "passed": [
+    "Dependency check skipped (CI environment)",
+    "Environment configuration checked",
+    "File permissions checked",
+    "Security headers configured"
+  ],
+  "score": 100
+}
