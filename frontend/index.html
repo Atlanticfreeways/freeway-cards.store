@@ -218,26 +218,8 @@
     <script src="js/i18n.js"></script>
     <script src="js/analytics.js"></script>
     <script>
-        function showTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById(tab).classList.add('active');
-        }
-
-        // Initialize login form validation
-        const loginForm = new FormValidator(document.getElementById('loginForm'));
-        loginForm
-            .addRule('email', [ValidationRules.required(), ValidationRules.email()])
-            .addRule('password', [ValidationRules.required()]);
-
-        loginForm.onSubmit = function() {
-            setTimeout(() => {
-                this.form.classList.remove('loading');
-                // Simulate successful login
-                window.location.href = 'dashboard/index.html';
-            }, 1500);
-        };
+        // Landing page - no form validation needed
+        console.log('Freeway Cards landing page loaded');
     </script>
 </body>
 </html>

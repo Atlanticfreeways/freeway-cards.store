@@ -30,14 +30,14 @@ class Config {
             },
             staging: {
                 apiBaseUrl: 'https://freeway-cards-backend.onrender.com/api',
-                googleClientId: '804228968611-lcsqnvmgfabs4s9445d0d3lsikqupet3.apps.googleusercontent.com',
+                googleClientId: null, // Disabled for staging
                 enableAnalytics: true,
                 enableErrorReporting: true,
                 logLevel: 'info'
             },
             production: {
                 apiBaseUrl: (window.ENV && window.ENV.API_BASE_URL_PROD) || 'https://freeway-cards-backend.onrender.com/api',
-                googleClientId: (window.ENV && window.ENV.GOOGLE_CLIENT_ID_PROD) || '804228968611-lcsqnvmgfabs4s9445d0d3lsikqupet3.apps.googleusercontent.com',
+                googleClientId: null, // Disabled until proper domain setup
                 enableAnalytics: true,
                 enableErrorReporting: true,
                 logLevel: 'error'

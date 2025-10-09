@@ -1,0 +1,43 @@
+/* Payment Styles for Freeway Cards */
+.payment-container{display:grid;grid-template-columns:1fr 2fr;gap:2rem;margin:2rem 0}
+.order-summary{background:#fff;padding:2rem;border-radius:8px;border:1px solid #e2e8f0;height:fit-content}
+.order-summary h2{margin-bottom:1.5rem;color:#0f172a}
+.order-item{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:1px solid #f1f5f9}
+.item-info{display:flex;flex-direction:column;gap:0.25rem}
+.item-info strong{color:#0f172a}
+.item-info span{color:#64748b;font-size:0.9rem}
+.item-price{font-weight:600;color:#0f172a}
+.order-total{margin-top:1rem;padding-top:1rem;border-top:2px solid #e2e8f0}
+.total-line{display:flex;justify-content:space-between;margin-bottom:0.5rem}
+.total-line.final{font-weight:700;font-size:1.1rem;color:#0f172a}
+.payment-methods{background:#fff;padding:2rem;border-radius:8px;border:1px solid #e2e8f0}
+.payment-tabs{display:flex;gap:0.5rem;margin-bottom:2rem;border-bottom:1px solid #e2e8f0;flex-wrap:wrap}
+.tab-btn{background:none;border:none;padding:1rem;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-size:0.9rem}
+.tab-btn.active{border-bottom-color:#3b82f6;color:#3b82f6}
+.tab-btn:hover{background:#f8fafc}
+.payment-form{display:none}
+.payment-form.active{display:block}
+.crypto-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1rem 0}
+.crypto-option{display:flex;align-items:center;gap:1rem;padding:1rem;border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all .2s}
+.crypto-option:hover{border-color:#3b82f6;background:#f8fafc}
+.crypto-option.selected{border-color:#3b82f6;background:#eff6ff}
+.crypto-icon{font-size:1.5rem;width:40px;text-align:center}
+.crypto-details{margin-top:2rem;padding:2rem;background:#f8fafc;border-radius:8px}
+.crypto-address{display:flex;gap:1rem;align-items:center;margin:1rem 0}
+.crypto-address code{background:#fff;padding:0.75rem;border-radius:6px;flex:1;font-size:0.8rem;border:1px solid #e2e8f0}
+.qr-code{text-align:center;margin:1rem 0}
+.crypto-note{color:#64748b;font-size:0.9rem;text-align:center;margin:1rem 0}
+.security-info{text-align:center;margin:2rem 0;padding:2rem;background:#f8fafc;border-radius:8px}
+.security-badges{display:flex;justify-content:center;gap:1rem;margin-bottom:1rem}
+.badge{background:#10b981;color:white;padding:0.5rem 1rem;border-radius:20px;font-size:0.8rem}
+.spinner{border:2px solid #f3f3f3;border-top:2px solid #3b82f6;border-radius:50%;width:20px;height:20px;animation:spin 1s linear infinite;margin-left:0.5rem}
+.spinner.hidden{display:none}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+@media(max-width:768px){
+.payment-container{grid-template-columns:1fr}
+.crypto-grid{grid-template-columns:1fr}
+.crypto-address{flex-direction:column;align-items:stretch}
+.security-badges{flex-direction:column;align-items:center}
+.payment-tabs{justify-content:center}
+}

@@ -104,6 +104,18 @@ input.error {
   transform: none;
 }
 
+.btn-secondary {
+  background: white;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.btn-secondary:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+}
+
 /* Loading States */
 .loading {
   position: relative;

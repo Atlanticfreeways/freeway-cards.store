@@ -8,20 +8,28 @@ class GoogleOAuth {
     getClientId() {
         if (window.config) {
             const clientId = window.config.get('googleClientId');
+            if (!clientId) return null;
             // Decode any HTML entities
             const div = document.createElement('div');
             div.innerHTML = clientId;
             return div.textContent || div.innerText || clientId;
         }
-        return '804228968611-lcsqnvmgfabs4s9445d0d3lsikqupet3.apps.googleusercontent.com';
+        return null;
     }
 
     async initialize() {
         if (this.isInitialized) return;
 
         try {
+            // Skip if no client ID configured
+            if (!this.clientId) {
+                console.log('Google OAuth disabled - no client ID configured');
+                this.showDisabledMessage();
+                return;
+            }
+            
             // Validate client ID
-            if (!this.clientId || this.clientId.includes('&quot;') || this.clientId.length < 20) {
+            if (this.clientId.includes('&quot;') || this.clientId.length < 20) {
                 throw new Error('Invalid Google Client ID configuration');
             }
             
@@ -116,6 +124,16 @@ class GoogleOAuth {
                 text: 'signup_with'
             }
         );
+    }
+
+    showDisabledMessage() {
+        const errorElements = document.querySelectorAll('#google-signin-error, #google-signup-error');
+        errorElements.forEach(el => {
+            if (el) {
+                el.textContent = 'Google Sign-In temporarily unavailable';
+                el.style.display = 'block';
+            }
+        });
     }
 
     // Fallback for custom buttons

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Payment Success - Freeway Cards</title>
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div class="nav">
+<div class="nav-left">
+<a href="../index.html" class="logo">💳 Freeway Cards</a>
+<a href="../cards/index.html">Cards</a>
+<a href="index.html">Wallet</a>
+<a href="../dashboard/index.html">Dashboard</a>
+</div>
+<div class="nav-right">
+<button id="themeBtn" onclick="toggleTheme()" class="theme-btn">🌙</button>
+<div id="navUser"></div>
+</div>
+</div>
+
+<div class="container">
+<div class="success-container">
+<div class="success-icon">✅</div>
+<h1>Payment Successful!</h1>
+<p>Thank you for your payment. Your wallet has been funded successfully.</p>
+
+<div class="success-details">
+<h3>Transaction Details</h3>
+<div id="transactionDetails"></div>
+</div>
+
+<div class="next-steps">
+<h3>What's Next?</h3>
+<div class="steps-grid">
+<div class="step">
+<div class="step-number">1</div>
+<div class="step-content">
+<strong>Create Cards</strong>
+<p>Generate virtual cards for your expenses</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<div class="step-content">
+<strong>Set Limits</strong>
+<p>Configure spending limits and restrictions</p>
+</div>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<div class="step-content">
+<strong>Start Spending</strong>
+<p>Use your virtual cards for online purchases</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="action-buttons">
+<a href="../dashboard/index.html" class="btn">Go to Dashboard</a>
+<a href="../cards/index.html" class="btn btn-secondary">Create Card</a>
+</div>
+</div>
+</div>
+
+<script src="../js/api.js"></script>
+<script>
+// Load transaction details
+document.addEventListener('DOMContentLoaded', function() {
+    const wallets = JSON.parse(localStorage.getItem('wallets')) || {};
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const userWallet = wallets[currentUser.email];
+    
+    if (userWallet && userWallet.transactions.length > 0) {
+        const latestTransaction = userWallet.transactions[0];
+        document.getElementById('transactionDetails').innerHTML = `
+            <div class="detail-row">
+                <span>Transaction ID:</span>
+                <span>#${latestTransaction.id}</span>
+            </div>
+            <div class="detail-row">
+                <span>Amount:</span>
+                <span>$${latestTransaction.amount.toFixed(2)}</span>
+            </div>
+            <div class="detail-row">
+                <span>Method:</span>
+                <span>${latestTransaction.description}</span>
+            </div>
+            <div class="detail-row">
+                <span>Date:</span>
+                <span>${new Date(latestTransaction.date).toLocaleDateString()}</span>
+            </div>
+        `;
+    }
+});
+</script>
+
+<style>
+.success-container{text-align:center;max-width:600px;margin:4rem auto;padding:2rem}
+.success-icon{font-size:4rem;margin-bottom:1rem}
+.success-container h1{color:#10b981;margin-bottom:1rem}
+.success-container p{color:#64748b;margin-bottom:2rem}
+.success-details{background:#f8fafc;padding:2rem;border-radius:8px;margin:2rem 0;text-align:left}
+.detail-row{display:flex;justify-content:space-between;margin-bottom:0.5rem;padding:0.5rem 0;border-bottom:1px solid #e2e8f0}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin:2rem 0}
+.step{display:flex;gap:1rem;text-align:left}
+.step-number{background:#3b82f6;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0}
+.action-buttons{display:flex;gap:1rem;justify-content:center;margin-top:2rem}
+</style>
+</body>
+</html>
