@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const GiftCard = require('../models/GiftCard');
 const User = require('../models/User');
+const Transaction = require('../models/Transaction');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
@@ -54,6 +55,17 @@ router.post('/purchase', auth, [
     // Deduct from wallet
     user.walletBalance -= total;
     await user.save();
+
+    // Create transaction record
+    const transaction = new Transaction({
+      userId: req.userId,
+      type: 'purchase',
+      amount: -total,
+      description: `Gift card purchase for ${recipientName}`,
+      giftCardId: giftCard._id,
+      transactionId: `gc_${Date.now()}`
+    });
+    await transaction.save();
 
     res.status(201).json({
       giftCard: {

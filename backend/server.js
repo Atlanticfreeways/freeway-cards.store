@@ -18,6 +18,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/freeway-c
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/users'));
 app.use('/api/giftcards', require('./routes/giftcards'));
 app.use('/api/wallet', require('./routes/wallet'));
 
