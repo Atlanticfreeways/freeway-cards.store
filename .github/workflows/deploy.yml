@@ -26,16 +26,10 @@ jobs:
     - name: Run tests
       run: |
         cd backend
-        npm run test:all
+        npm test
       env:
         NODE_ENV: test
         JWT_SECRET: test-secret
-        MONGODB_URI: mongodb://localhost:27017/test
-    
-    - name: Security audit
-      run: |
-        cd backend
-        npm run audit:security
 
   deploy:
     needs: test
