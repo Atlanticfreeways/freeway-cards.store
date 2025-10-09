@@ -131,18 +131,28 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 10000;
-const HTTPS_PORT = process.env.HTTPS_PORT || 443;
 
-// Simple server startup for deployment
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT} (${process.env.NODE_ENV || 'development'})`);
-});
+// Only start server if not in test mode
+let server;
+if (process.env.NODE_ENV !== 'test') {
+  server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT} (${process.env.NODE_ENV || 'development'})`);
+  });
+}
 
 // Enhanced graceful shutdown
 const gracefulShutdown = (signal) => {
   console.log(`${signal} received, shutting down gracefully`);
   
-  server.close((err) => {
+  const closeServer = (callback) => {
+    if (server) {
+      server.close(callback);
+    } else {
+      callback();
+    }
+  };
+  
+  closeServer((err) => {
     if (err) {
       console.error('Error during server shutdown:', err);
       process.exit(1);
@@ -161,7 +171,6 @@ const gracefulShutdown = (signal) => {
     });
   });
   
-  // Force shutdown after 30 seconds
   setTimeout(() => {
     console.error('Forced shutdown after timeout');
     process.exit(1);
