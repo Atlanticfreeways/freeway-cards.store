@@ -31,28 +31,5 @@ jobs:
         NODE_ENV: test
         JWT_SECRET: test-secret
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Deploy to server
-      uses: appleboy/ssh-action@v0.1.5
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-          cd /var/www/freeway-cards
-          git pull origin main
-          export NODE_ENV=production
-          export MONGODB_URI="${{ secrets.MONGODB_URI }}"
-          export JWT_SECRET="${{ secrets.JWT_SECRET }}"
-          export GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
-          export MONGO_ROOT_USER="${{ secrets.MONGO_ROOT_USER }}"
-          export MONGO_ROOT_PASSWORD="${{ secrets.MONGO_ROOT_PASSWORD }}"
-          chmod +x scripts/deploy.sh
-          ./scripts/deploy.sh
+  # Netlify handles deployment automatically via GitHub integration
+  # No manual deployment step needed for static sites
