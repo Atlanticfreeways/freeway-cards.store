@@ -15,7 +15,3 @@
   from = "/*"
   to = "/index.html"
   status = 200
-
-[context.production.environment]
-  GOOGLE_CLIENT_ID_PROD = "your-production-google-client-id"
-  API_BASE_URL_PROD = "https://your-backend-url.herokuapp.com/api"
