@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema({
   isVerified: {
     type: Boolean,
     default: false
+  },
+  kycStatus: {
+    type: String,
+    enum: ['not_started', 'pending', 'approved', 'rejected'],
+    default: 'not_started'
   }
 }, {
   timestamps: true

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Freeway Cards</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .onboarding-container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .step {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .step-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .step-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        
+        .step-description {
+            color: #718096;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #5a67d8;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #667eea;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 25%;"></div>
+        </div>
+        
+        <!-- Step 1: Welcome -->
+        <div class="step active" id="step1">
+            <div class="step-icon">🎉</div>
+            <h2 class="step-title">Welcome to Freeway Cards!</h2>
+            <p class="step-description">
+                You're about to experience the future of virtual payments. 
+                Create instant Mastercard & Visa cards, fund with crypto or bank transfers.
+            </p>
+            <button class="btn" onclick="nextStep()">Get Started</button>
+        </div>
+        
+        <!-- Step 2: KYC -->
+        <div class="step" id="step2">
+            <div class="step-icon">🔒</div>
+            <h2 class="step-title">Quick Verification</h2>
+            <p class="step-description">
+                To comply with regulations, we need to verify your identity. 
+                This takes just 2 minutes and unlocks higher limits.
+            </p>
+            <button class="btn" onclick="nextStep()">Start Verification</button>
+            <button class="btn-secondary" onclick="skipStep()">Skip for Now</button>
+        </div>
+        
+        <!-- Step 3: First Card -->
+        <div class="step" id="step3">
+            <div class="step-icon">💳</div>
+            <h2 class="step-title">Create Your First Card</h2>
+            <p class="step-description">
+                Let's create your first virtual card! You can use it immediately 
+                for online purchases anywhere Visa/Mastercard is accepted.
+            </p>
+            <button class="btn" onclick="nextStep()">Create Card</button>
+        </div>
+        
+        <!-- Step 4: Complete -->
+        <div class="step" id="step4">
+            <div class="step-icon">🚀</div>
+            <h2 class="step-title">You're All Set!</h2>
+            <p class="step-description">
+                Your Freeway Cards account is ready. Start funding your wallet 
+                and creating cards for all your payment needs.
+            </p>
+            <button class="btn" onclick="goToDashboard()">Go to Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep++;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                updateProgress();
+            }
+        }
+
+        function skipStep() {
+            nextStep();
+        }
+
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

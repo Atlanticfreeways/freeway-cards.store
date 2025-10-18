@@ -3,223 +3,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Freeway Cards - Virtual Cards for Everyone</title>
+    <title>Freeway Cards - Virtual Mastercard & Visa Platform</title>
+    <meta name="description" content="Get instant virtual Mastercard & Visa cards. Fund with crypto or bank transfers. Perfect for online purchases, privacy, and spending control.">
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/mobile.css">
-    <link rel="stylesheet" href="css/accessibility.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#007bff">
     <style>
-        .hero {
+        .hero-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 80px 0;
+            padding: 80px 20px;
             text-align: center;
         }
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.2;
         }
+        
         .hero-subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
+            font-size: 1.3rem;
+            margin-bottom: 40px;
             opacity: 0.9;
         }
-        .hero-actions {
+        
+        .cta-buttons {
             display: flex;
-            gap: 1rem;
+            gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
+            margin-top: 30px;
         }
-        .btn-lg {
-            padding: 16px 32px;
+        
+        .cta-btn {
+            padding: 15px 30px;
             font-size: 1.1rem;
-            min-height: 48px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
         }
-        .features {
-            padding: 60px 0;
-            background: #f8f9fa;
+        
+        .cta-primary {
+            background: #ff6b6b;
+            color: white;
         }
-        .features h2 {
-            text-align: center;
-            margin-bottom: 3rem;
-            font-size: 2.5rem;
+        
+        .cta-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
         }
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+        
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
         }
-        .feature-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        .card-types {
-            padding: 60px 0;
-        }
-        .card-types h2 {
-            text-align: center;
-            margin-bottom: 3rem;
-            font-size: 2.5rem;
-        }
-        .types-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 800px;
+        
+        .features-section {
+            padding: 80px 20px;
+            max-width: 1200px;
             margin: 0 auto;
         }
-        .type-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+        
+        .feature-card {
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border: 2px solid transparent;
+            padding: 30px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
         }
-        .type-card.featured {
-            border-color: #667eea;
-            transform: scale(1.05);
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
         }
-        .price {
-            font-size: 2rem;
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        
+        .feature-description {
+            color: #718096;
+            line-height: 1.6;
+        }
+        
+        .stats-section {
+            background: #f7fafc;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 800px;
+            margin: 40px auto 0;
+        }
+        
+        .stat-item {
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
             font-weight: bold;
             color: #667eea;
-            margin: 1rem 0;
+            margin-bottom: 10px;
         }
-        .price span {
-            font-size: 1rem;
-            color: #666;
+        
+        .stat-label {
+            color: #718096;
+            font-size: 1.1rem;
         }
-        .type-card ul {
-            list-style: none;
-            padding: 0;
-            margin: 1.5rem 0;
-        }
-        .type-card li {
-            padding: 0.5rem 0;
-        }
-        .cta {
-            background: #667eea;
+        
+        .demo-banner {
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
             color: white;
-            padding: 60px 0;
+            padding: 20px;
             text-align: center;
+            margin: 40px 0;
+            border-radius: 12px;
         }
-        .cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+        
+        .demo-banner h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
         }
+        
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2rem; }
-            .hero-actions { flex-direction: column; align-items: center; }
-            .btn-lg { width: 100%; max-width: 300px; }
-            .features-grid { grid-template-columns: 1fr; }
-            .types-grid { grid-template-columns: 1fr; }
-            .type-card.featured { transform: none; }
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-btn {
+                width: 250px;
+            }
         }
     </style>
 </head>
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    <button id="installBtn" class="btn btn-primary" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000;">Install App</button>
-    <button id="themeToggle" class="btn" style="position: fixed; top: 20px; right: 20px; z-index: 1000; width: 44px; height: 44px;">🔄</button>
-    
+    <!-- Navigation Header -->
+    <header style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
+        <nav style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; max-width: 1200px; margin: 0 auto;">
+            <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">💳 Freeway Cards</div>
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <a href="demo.html" style="color: #718096; text-decoration: none;">Demo</a>
+                <a href="login.html" style="background: #667eea; color: white; padding: 8px 20px; border-radius: 6px; text-decoration: none;">Login</a>
+                <a href="auth/signup.html" style="border: 2px solid #667eea; color: #667eea; padding: 6px 18px; border-radius: 6px; text-decoration: none;">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+
     <!-- Hero Section -->
-    <section class="hero">
+    <div style="padding-top: 80px;">
+    <section class="hero-section">
         <div class="container">
-            <h1>🎁 Digital Gift Cards Made Simple</h1>
-            <p class="hero-subtitle">Buy, send, and redeem gift cards instantly. Secure payments, global access, crypto-friendly.</p>
-            <div class="hero-actions">
-                <a href="auth/signup.html" class="btn btn-primary btn-lg">🚀 Get Started</a>
-                <a href="login.html" class="btn btn-secondary btn-lg">🔑 Sign In</a>
+            <h1 class="hero-title">💳 Virtual Cards<br>Made Simple</h1>
+            <p class="hero-subtitle">
+                Get instant Mastercard & Visa virtual cards.<br>
+                Fund with crypto or bank transfers. Perfect for online purchases.
+            </p>
+            
+            <div class="cta-buttons">
+                <a href="demo.html" class="cta-btn cta-primary">🎭 Try Interactive Demo</a>
+                <a href="login.html" class="cta-btn cta-secondary">🚀 Get Started Free</a>
             </div>
         </div>
     </section>
 
+    <!-- Demo Banner -->
+    <div class="demo-banner">
+        <h3>🎪 Live Interactive Demo Available</h3>
+        <p>Experience the full platform with realistic data and working features</p>
+        <a href="demo.html" class="cta-btn" style="background: rgba(255,255,255,0.2); margin-top: 10px;">
+            Launch Demo →
+        </a>
+    </div>
+
     <!-- Features Section -->
-    <section class="features">
+    <section class="features-section">
         <div class="container">
-            <h2>💎 Why Choose Freeway Cards?</h2>
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: #2d3748;">
+                Why Choose Freeway Cards?
+            </h2>
+            <p style="text-align: center; font-size: 1.2rem; color: #718096; margin-bottom: 50px;">
+                The most advanced virtual card platform for modern users
+            </p>
+            
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
-                    <h3>Instant Delivery</h3>
-                    <p>Buy and send gift cards instantly. No waiting, delivered via email.</p>
+                    <h3 class="feature-title">Instant Card Creation</h3>
+                    <p class="feature-description">
+                        Generate virtual Mastercard & Visa cards in seconds. 
+                        No waiting, no paperwork, just instant access.
+                    </p>
                 </div>
+                
                 <div class="feature-card">
                     <div class="feature-icon">₿</div>
-                    <h3>Multiple Payment Options</h3>
-                    <p>Pay with credit cards, PayPal, or cryptocurrencies like Bitcoin.</p>
+                    <h3 class="feature-title">Crypto Funding</h3>
+                    <p class="feature-description">
+                        Fund your cards with Bitcoin, Ethereum, USDC, or USDT. 
+                        Convert crypto to spendable cards instantly.
+                    </p>
                 </div>
+                
                 <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Secure & Safe</h3>
-                    <p>Bank-level security with real-time fraud protection.</p>
+                    <div class="feature-icon">🏦</div>
+                    <h3 class="feature-title">Bank Integration</h3>
+                    <p class="feature-description">
+                        Connect your bank account for instant transfers. 
+                        Zero fees, maximum convenience.
+                    </p>
                 </div>
+                
                 <div class="feature-card">
-                    <div class="feature-icon">🌍</div>
-                    <h3>Global Brands</h3>
-                    <p>Access gift cards from top retailers worldwide - Amazon, Apple, Google, and more.</p>
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">Privacy First</h3>
+                    <p class="feature-description">
+                        Minimal KYC requirements. Keep your purchases private 
+                        while staying compliant.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎛️</div>
+                    <h3 class="feature-title">Smart Controls</h3>
+                    <p class="feature-description">
+                        Set spending limits, freeze cards instantly, 
+                        and control where your cards can be used.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Mobile Ready</h3>
+                    <p class="feature-description">
+                        Progressive Web App that works like a native mobile app. 
+                        Install and use anywhere.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Card Types Section -->
-    <section class="card-types">
+    <!-- Stats Section -->
+    <section class="stats-section">
         <div class="container">
-            <h2>🎯 Choose Your Card Type</h2>
-            <div class="types-grid">
-                <div class="type-card">
-                    <h3>⚡ Instant Cards</h3>
-                    <div class="price">$2.99 <span>/card</span></div>
-                    <ul>
-                        <li>✅ Create instantly</li>
-                        <li>✅ One-time fee</li>
-                        <li>✅ Perfect for online shopping</li>
-                        <li>✅ No monthly charges</li>
-                    </ul>
-                    <a href="auth/signup.html" class="btn btn-primary">Get Instant Card</a>
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: #2d3748;">
+                Platform by the Numbers
+            </h2>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">0%</div>
+                    <div class="stat-label">Monthly Fees</div>
                 </div>
-                <div class="type-card featured">
-                    <h3>🔄 Subscription Cards</h3>
-                    <div class="price">$9.99 <span>/month</span></div>
-                    <ul>
-                        <li>✅ Unlimited cards</li>
-                        <li>✅ Higher limits</li>
-                        <li>✅ Priority support</li>
-                        <li>✅ Advanced analytics</li>
-                    </ul>
-                    <a href="auth/signup.html" class="btn btn-primary">Start Subscription</a>
+                
+                <div class="stat-item">
+                    <div class="stat-number">&lt;30s</div>
+                    <div class="stat-label">Card Creation Time</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Instant Funding</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime Guarantee</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="features-section">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 50px; color: #2d3748;">
+                How It Works
+            </h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">1️⃣</div>
+                    <h3 class="feature-title">Sign Up</h3>
+                    <p class="feature-description">
+                        Create your account in minutes. Basic verification 
+                        gets you started immediately.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">2️⃣</div>
+                    <h3 class="feature-title">Add Funds</h3>
+                    <p class="feature-description">
+                        Fund your wallet via bank transfer or cryptocurrency. 
+                        Instant processing, zero fees.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">3️⃣</div>
+                    <h3 class="feature-title">Create Cards</h3>
+                    <p class="feature-description">
+                        Generate virtual cards for different purposes. 
+                        Shopping, travel, subscriptions - you name it.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">4️⃣</div>
+                    <h3 class="feature-title">Start Spending</h3>
+                    <p class="feature-description">
+                        Use your virtual cards anywhere Mastercard & Visa 
+                        are accepted online. Worldwide acceptance.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="cta">
+    <section class="hero-section" style="padding: 60px 20px;">
         <div class="container">
-            <h2>🚀 Ready to Get Started?</h2>
-            <p>Join thousands of users who trust Freeway Cards for their virtual payment needs.</p>
-            <a href="auth/signup.html" class="btn btn-primary btn-lg">Create Your Account</a>
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">
+                Ready to Get Started?
+            </h2>
+            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">
+                Join thousands of users who trust Freeway Cards for their virtual payment needs
+            </p>
+            
+            <div class="cta-buttons">
+                <a href="demo.html" class="cta-btn cta-primary">🎭 Try Demo First</a>
+                <a href="auth/signup.html" class="cta-btn cta-secondary">🚀 Create Account</a>
+            </div>
+            
+            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">
+                No monthly fees • Instant setup • Cancel anytime
+            </p>
         </div>
     </section>
-    
-    <script src="js/pwa.js"></script>
-    <script src="js/themes.js"></script>
-    <script src="js/notifications.js"></script>
-    <script src="js/i18n.js"></script>
-    <script src="js/analytics.js"></script>
-    <script>
-        // Landing page - no form validation needed
-        console.log('Freeway Cards landing page loaded');
-    </script>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: #2d3748; color: white; padding: 40px 20px; text-align: center;">
+        <div class="container">
+            <h3>💳 Freeway Cards</h3>
+            <p>Virtual cards for the modern world</p>
+            
+            <div style="margin: 20px 0;">
+                <a href="legal/privacy.html" style="color: #a0aec0; margin: 0 15px;">Privacy Policy</a>
+                <a href="legal/terms.html" style="color: #a0aec0; margin: 0 15px;">Terms of Service</a>
+                <a href="support/contact.html" style="color: #a0aec0; margin: 0 15px;">Contact</a>
+            </div>
+            
+            <p style="margin-top: 30px; opacity: 0.6; font-size: 0.9rem;">
+                © 2024 Freeway Cards. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Load demo functionality -->
+    <script src="js/mockup-data.js"></script>
+    <script src="js/demo-mode.js"></script>
 </body>
 </html>

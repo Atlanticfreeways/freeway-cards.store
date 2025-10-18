@@ -1,13 +1,15 @@
-# 🎁 Freeway Cards Store
+# 💳 Freeway Cards Platform
 
 **Live Demo**: https://freewaycards-store.netlify.app
 
-A complete digital gift card platform with modern frontend and comprehensive user flows.
+An online platform that provides virtual Mastercard/Visa card  for user to use for online purchases with instant funding via bank transfers and cryptocurrency.
 
 ## 🎯 Project Status
 
 **Phase 1**: ✅ Frontend Complete & Deployed
-**Phase 2**: 🔄 Backend API Development (In Progress)
+**Phase 2**: ✅ Backend API Development (Complete)
+**Phase 3**: ✅ Database & KYC Integration (Complete)
+**Phase 4**: 🔄 Card Issuer Integration (In Progress)
 
 - 🚀 **Live Frontend**: https://freewaycards-store.netlify.app
 - 📱 **Mobile-First Design**: Responsive across all devices
@@ -20,8 +22,8 @@ A complete digital gift card platform with modern frontend and comprehensive use
 - **Landing Page**: Hero section, features, pricing plans
 - **Authentication**: Login, signup, password reset, email verification
 - **Dashboard**: User profile, navigation, wallet overview
-- **Gift Cards**: Purchase system with multiple payment options
-- **Wallet**: Balance management, transaction history
+- **Virtual Cards**: Create/manage Mastercard/Visa cards
+- **Wallet**: Balance management, instant funding, transaction history
 - **PWA**: Installable app with offline capabilities
 
 ### 🔧 Technical Stack
@@ -51,6 +53,9 @@ A complete digital gift card platform with modern frontend and comprehensive use
 
 ### View Live Site
 Visit: https://freewaycards-store.netlify.app
+
+### Interactive Demo
+Explore full platform: [Demo Mode](demo.html)
 
 ### Local Development
 ```bash

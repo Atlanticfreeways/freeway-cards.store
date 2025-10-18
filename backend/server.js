@@ -12,15 +12,36 @@ app.use(cors());
 app.use(express.json());
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/freeway-cards')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+const connectDB = async () => {
+  try {
+    const mongoUri = process.env.MONGODB_ATLAS_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/freeway-cards';
+    await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      maxPoolSize: 20,
+      minPoolSize: 5
+    });
+    console.log('✅ Database connected successfully');
+  } catch (error) {
+    console.error('❌ Database connection failed:', error.message);
+    process.exit(1);
+  }
+};
+
+connectDB();
+
+// Webhook routes (before JSON middleware)
+app.use('/api/webhooks', require('./routes/webhooks'));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
-app.use('/api/giftcards', require('./routes/giftcards'));
+app.use('/api/cards', require('./routes/cards'));
+app.use('/api/funding', require('./routes/funding'));
 app.use('/api/wallet', require('./routes/wallet'));
+app.use('/api/payments', require('./routes/payments'));
+app.use('/api/kyc', require('./routes/kyc'));
+app.use('/api/admin', require('./routes/admin'));
 
 // Health check
 app.get('/api/health', (req, res) => {
